@@ -1,0 +1,39 @@
+{
+  "name": "tangloop",
+  "version": "1.0.0",
+  "description": "TANG-LOOP - Hyperlocal B2B Food Rescue & Circular Economy Platform Kota Tangerang",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "node build-app-v2.js",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:push": "drizzle-kit push",
+    "drizzle:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "better-auth": "^1.1.18",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.38.4",
+    "express": "^4.21.2",
+    "pg": "^8.13.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.4"
+  },
+  "keywords": [
+    "food-rescue",
+    "circular-economy",
+    "b2b",
+    "tangerang",
+    "drizzle-orm",
+    "express",
+    "better-auth",
+    "ai-grading"
+  ],
+  "author": "TANG-LOOP Team",
+  "license": "MIT"
+}

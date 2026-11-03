@@ -1970,6 +1970,13 @@
 
     function lockLotAndProceed() {
       startSmartLockTimer();
+      const lotId = AppState.activeLot ? AppState.activeLot.id : 'LOT-TT-001';
+      fetch('/api/lots/' + lotId + '/lock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ buyerId: 'BUY-001', durationSeconds: 900 })
+      }).catch(e => console.warn('Lock API note:', e));
+
       showToast('⏱ Kuota Lot Berhasil Dikunci 15 Menit!', 'success');
       navigateTo('jadwal-logistik');
     }
@@ -2007,6 +2014,17 @@
       bbox.classList.remove('hidden');
       badge.classList.add('hidden');
 
+      fetch('/api/ai/grade-scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes: 'Scan dari kamera pos lapak', commodityHint: document.getElementById('post-name')?.value || 'Tomat' })
+      }).then(r => r.json()).then(res => {
+        if (res && res.data) {
+          const c = res.data;
+          console.log('AI scan result from API:', c);
+        }
+      }).catch(e => console.warn('AI API note:', e));
+
       setTimeout(() => {
         btn.disabled = false;
         btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">smart_toy</span> Scan Ulang dengan AI';
@@ -2022,7 +2040,7 @@
       const price = parseInt(document.getElementById('post-price').value) || 8000;
 
       const newLot = {
-        id: AppState.lots.length + 1,
+        id: 'LOT-TT-' + String(AppState.lots.length + 1).padStart(3, '0'),
         title: name,
         supplier: 'Lapak H. Somad • Kios B-12',
         cluster: 'Pasar Induk Tanah Tinggi',
@@ -2037,6 +2055,20 @@
         badgeColor: 'bg-primary'
       };
 
+      fetch('/api/lots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          supplierName: 'Lapak H. Somad',
+          supplierKiosk: 'Kios B-12',
+          commodity: name,
+          weightKg: weight,
+          basePrice: price * 1.5,
+          floorPrice: price,
+          grade: 'Grade-A'
+        })
+      }).catch(e => console.warn('Post lot API note:', e));
+
       AppState.lots.unshift(newLot);
       renderBerandaLots();
       showToast('✅ Lot Baru Berhasil Terbit di Beranda Lot!', 'success');
@@ -2045,12 +2077,28 @@
 
     // --- Valorization Router ---
     function applyValorizationRoute() {
+      fetch('/api/routing/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ commodity: 'Surplus Sayur Pasar Induk', organolepticScore: 82, residualHours: 24 })
+      }).catch(e => console.warn('Routing API note:', e));
+
       showToast('Rute Valorisasi Konsumsi Langsung Diterapkan!', 'success');
       navigateTo('jadwal-logistik');
     }
 
     // --- Logistics Booking ---
     function confirmPickupBooking() {
+      fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lotId: AppState.activeLot ? AppState.activeLot.id : 'LOT-TT-001',
+          buyerId: 'BUY-001',
+          quantityKg: AppState.activeLot ? AppState.activeLot.stockKg : 45
+        })
+      }).catch(e => console.warn('Order API note:', e));
+
       showToast('Armada Subuh Dikonfirmasi & Surat Jalan Terbit!', 'success');
       startLiveTelemetrySensor();
       navigateTo('lacak-armada');
@@ -2059,11 +2107,22 @@
     // --- Live IoT Temperature Telemetry Simulation ---
     function startLiveTelemetrySensor() {
       clearInterval(window.telemetryTimer);
-      window.telemetryTimer = setInterval(() => {
-        const el = document.getElementById('telemetry-temp');
-        if (el) {
-          const temp = (3.7 + Math.random() * 0.3).toFixed(1);
-          el.innerText = temp + '°C';
+      window.telemetryTimer = setInterval(async () => {
+        try {
+          const res = await fetch('/api/telemetry/active');
+          if (res.ok) {
+            const json = await res.json();
+            const el = document.getElementById('telemetry-temp');
+            if (el && json.data && json.data.refrigerationUnit) {
+              el.innerText = json.data.refrigerationUnit.currentTemperature;
+            }
+          }
+        } catch (e) {
+          const el = document.getElementById('telemetry-temp');
+          if (el) {
+            const temp = (3.7 + Math.random() * 0.3).toFixed(1);
+            el.innerText = temp + '°C';
+          }
         }
       }, 2500);
     }
@@ -2178,9 +2237,40 @@
       setTimeout(() => navigateTo('router-ai'), 800);
     }
 
+    // --- Backend API Sync Integration ---
+    async function syncWithBackend() {
+      try {
+        const res = await fetch('/api/lots');
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.data && json.data.length > 0) {
+            AppState.lots = json.data.map(l => ({
+              id: l.id,
+              title: l.commodity,
+              supplier: (l.supplierName || 'Lapak') + ' • ' + (l.supplierKiosk || 'Pasar Induk'),
+              cluster: 'Pasar Induk Tanah Tinggi',
+              category: l.category || 'konsumsi',
+              grade: l.grade || 'Grade-B',
+              priceMax: l.basePrice || 12000,
+              priceMin: l.floorPrice || 5000,
+              stockKg: l.remainingStockKg || 45,
+              shelfLifeHours: l.expiryHours || 12,
+              confidence: Math.round(l.qualityScore || 85),
+              img: l.img,
+              badgeColor: l.badgeColor || 'bg-primary'
+            }));
+            renderBerandaLots();
+          }
+        }
+      } catch (err) {
+        console.warn('API Sync offline/cached fallback:', err);
+      }
+    }
+
     // --- Init on Window Load ---
     window.addEventListener('DOMContentLoaded', () => {
       renderBerandaLots();
+      syncWithBackend();
       navigateTo('onboarding');
     });
   </script>
