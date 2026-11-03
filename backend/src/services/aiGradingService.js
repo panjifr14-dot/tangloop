@@ -79,3 +79,4 @@ function analyzeProduceImage({ imageUrl, notes = "", commodityHint = "" }) {
 module.exports = {
   analyzeProduceImage
 };
+

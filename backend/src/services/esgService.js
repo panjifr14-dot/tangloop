@@ -69,3 +69,4 @@ function getEsgDashboardMetrics() {
 module.exports = {
   getEsgDashboardMetrics
 };
+

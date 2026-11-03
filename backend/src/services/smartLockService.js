@@ -59,3 +59,4 @@ module.exports = {
   getLockStatus,
   DEFAULT_LOCK_DURATION_SECONDS
 };
+

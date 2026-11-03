@@ -320,3 +320,4 @@ class DataStore {
 
 const storeInstance = new DataStore();
 module.exports = storeInstance;
+
