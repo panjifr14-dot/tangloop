@@ -2,11 +2,9 @@
   "name": "tangloop",
   "version": "1.0.0",
   "description": "TANG-LOOP - Hyperlocal B2B Food Rescue & Circular Economy Platform Kota Tangerang",
-  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "build": "node -e \"console.log('Build completed successfully')\"",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:push": "drizzle-kit push",
     "drizzle:studio": "drizzle-kit studio"

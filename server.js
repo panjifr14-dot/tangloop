@@ -35,15 +35,19 @@ function getLocalIp() {
   return "localhost";
 }
 
-const server = app.listen(PORT, "0.0.0.0", () => {
-  const localIp = getLocalIp();
-  console.log("\n======================================================");
-  console.log("🚀 TANG-LOOP B2B Food Rescue Full-Stack Server");
-  console.log(`💻 Local Laptop : http://localhost:${PORT}`);
-  console.log(`📱 Akses HP     : http://${localIp}:${PORT}`);
-  console.log(`🔗 API Base     : http://localhost:${PORT}/api`);
-  console.log(`⚡ Health Check : http://localhost:${PORT}/api/health`);
-  console.log("======================================================\n");
-});
+// Only start listening when run directly via CLI (e.g. node server.js)
+// In serverless environments (Vercel), app is imported without starting a listener
+if (require.main === module) {
+  app.listen(PORT, "0.0.0.0", () => {
+    const localIp = getLocalIp();
+    console.log("\n======================================================");
+    console.log("🚀 TANG-LOOP B2B Food Rescue Full-Stack Server");
+    console.log(`💻 Local Laptop : http://localhost:${PORT}`);
+    console.log(`📱 Akses HP     : http://${localIp}:${PORT}`);
+    console.log(`🔗 API Base     : http://localhost:${PORT}/api`);
+    console.log(`⚡ Health Check : http://localhost:${PORT}/api/health`);
+    console.log("======================================================\n");
+  });
+}
 
-module.exports = server;
+module.exports = app;
