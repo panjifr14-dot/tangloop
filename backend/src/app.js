@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
+const fs = require("fs");
 
 const authRoutes = require("./routes/auth");
 const lotRoutes = require("./routes/lots");
@@ -18,6 +20,31 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+// Serve static screens assets if requested
+app.use("/screens", express.static(path.join(__dirname, "../screens")));
+app.use("/screens", express.static(path.join(process.cwd(), "public/screens")));
+app.use("/screens", express.static(path.join(process.cwd(), "screens")));
+
+// Helper to serve index.html for SPA web views
+function serveSpa(req, res, next) {
+  const possiblePaths = [
+    path.join(__dirname, "../index.html"),
+    path.join(__dirname, "../../index.html"),
+    path.join(process.cwd(), "public", "index.html"),
+    path.join(process.cwd(), "index.html")
+  ];
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.sendFile(path.resolve(p));
+    }
+  }
+  next();
+}
+
+// Serve SPA at root and web views
+app.get(["/", "/index.html"], serveSpa);
 
 // Health Check Endpoint
 app.get(["/api/health", "/health"], (req, res) => {
@@ -63,6 +90,14 @@ app.use(["/api/verifier", "/verifier"], verifierRoutes);
 app.use(["/api/telemetry", "/telemetry"], telemetryRoutes);
 app.use(["/api/certificates", "/certificates"], certRoutes);
 app.use(["/api/esg", "/esg"], esgRoutes);
+
+// Fallback all non-API web routes to SPA index.html
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    return next();
+  }
+  return serveSpa(req, res, next);
+});
 
 // Fallback 404 handler for API routes
 app.use((req, res) => {

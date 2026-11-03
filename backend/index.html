@@ -1,0 +1,2577 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>TANG-LOOP | Hyperlocal Food Rescue Kota Tangerang</title>
+  
+  <!-- Tailwind CSS & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#006c49",
+            "primary-container": "#10b981",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#00422b",
+            secondary: "#9d4300",
+            "secondary-container": "#fd761a",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#5c2400",
+            tertiary: "#00687a",
+            "tertiary-container": "#00b2d0",
+            surface: "#edfdf3",
+            "surface-container": "#e1f2e8",
+            "surface-container-high": "#dcece2",
+            "surface-container-low": "#e7f8ee",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#101e18",
+            "on-surface-variant": "#3c4a42",
+            outline: "#6c7a71",
+            "outline-variant": "#bbcabf"
+          },
+          fontFamily: {
+            headline: ["Plus Jakarta Sans", "sans-serif"],
+            body: ["Inter", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Full mobile responsive layout with matching natural surface */
+    html {
+      width: 100%;
+      min-height: 100%;
+      background-color: #edfdf3;
+      color: #101e18;
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #edfdf3;
+      color: #101e18;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      touch-action: pan-y;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px); }
+    .pt-safe { padding-top: max(env(safe-area-inset-top, 0px), 12px); }
+
+    /* App Shell Container */
+    #app-viewport-root {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background-color: #edfdf3;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 640px) {
+      #app-viewport-root {
+        box-shadow: 0 4px 24px rgba(0, 108, 73, 0.08);
+      }
+    }
+
+    /* Screen Views */
+    .screen-view {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      animation: viewFadeIn 0.16s ease-out;
+    }
+    .screen-view.hidden {
+      display: none !important;
+    }
+
+    @keyframes viewFadeIn {
+      from { opacity: 0.9; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hide ugly scrollbar while keeping smooth touch scrolling */
+    ::-webkit-scrollbar { display: none; width: 0; height: 0; }
+    * { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Scanning beam animation for AI */
+    @keyframes scanBeam {
+      0% { top: 0%; opacity: 0.8; }
+      50% { top: 85%; opacity: 1; }
+      100% { top: 0%; opacity: 0.8; }
+    }
+    .scanner-beam {
+      animation: scanBeam 2s infinite ease-in-out;
+    }
+
+    /* Pulsing radar for live tracking */
+    @keyframes radarPulse {
+      0% { transform: scale(0.9); opacity: 0.9; }
+      70% { transform: scale(1.6); opacity: 0; }
+      100% { transform: scale(0.9); opacity: 0; }
+    }
+    .radar-ring {
+      animation: radarPulse 2.2s infinite ease-out;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE APPLICATION ROOT CONTAINER -->
+  <div id="app-viewport-root">
+
+    <!-- TOP GLOBAL BAR -->
+    <header id="global-top-header" class="sticky top-0 z-40 bg-surface/90 backdrop-blur-md border-b border-surface-container-high px-4 py-2.5 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <button id="global-back-btn" onclick="appGoBack()" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors">
+          <span class="material-symbols-outlined text-[19px]">arrow_back</span>
+        </button>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span id="global-title" class="font-headline text-sm font-bold text-on-surface tracking-tight">TANG-LOOP</span>
+          </div>
+          <span id="global-subtitle" class="text-[10px] text-on-surface-variant font-medium block -mt-0.5">Pasar Induk Tanah Tinggi</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Quick 16 Screens Navigator Pill -->
+        <button onclick="toggleScreenNavigator(true)" class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-primary/25 text-primary font-headline text-[11px] font-bold shadow-sm hover:bg-primary hover:text-white transition-all">
+          <span class="material-symbols-outlined text-[14px]">map</span>
+          <span>16 Layar</span>
+        </button>
+
+        <!-- User Role Pill -->
+        <div id="global-role-pill" onclick="quickToggleRole()" title="Klik untuk ganti peran" class="cursor-pointer px-2 py-0.5 rounded-full bg-primary/10 text-primary font-headline text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+          <span id="global-role-text">Pembeli</span>
+          <span class="material-symbols-outlined text-[12px]">swap_horiz</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- FLOATING SYSTEM TOAST -->
+    <div id="app-toast" class="fixed top-12 left-4 right-4 z-50 max-w-[440px] mx-auto bg-slate-900/95 text-white p-3 rounded-2xl shadow-2xl border border-primary-container/40 backdrop-blur-md flex items-center justify-between gap-3 transition-all duration-300 transform -translate-y-24 opacity-0 pointer-events-none">
+      <div class="flex items-center gap-2.5">
+        <span id="toast-icon" class="material-symbols-outlined text-primary-container text-xl">check_circle</span>
+        <p id="toast-msg" class="text-xs font-medium leading-snug">Operasi berhasil</p>
+      </div>
+      <button onclick="hideToast()" class="text-slate-400 hover:text-white p-1">
+        <span class="material-symbols-outlined text-sm">close</span>
+      </button>
+    </div>
+
+    <!-- MAIN CONTAINER HOLDING ALL 16 INTEGRATED VIEWS -->
+    <main id="app-main-content" class="flex-1 flex flex-col relative w-full pb-20">
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 1 / L-01: PENGGUNA NORMAL - ONBOARDING INTERAKTIF                   -->
+      <!-- ========================================================================= -->
+      <section id="view-onboarding" class="screen-view">
+        <div class="relative w-full">
+          <div class="relative w-full h-48 bg-surface-container overflow-hidden">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm5z1WbpiVK4VoDRUg82y2qF2DZHniVcic48I7zpvvZ0A8C6U51iM7_o5HY9EI5LU4YyIdhZ7WwJxU-YxML3Xn5TPsEx5kMInDQ_v3pOZeOs-REn-IZ82m2e8KxcZUy1IWlj9rmJeA-MoZw87x9lfMXnVzgIHtieAIcc6o-skLRzNTsR4X8mPAoNRfm5tArW_ICAopBNoiwBt7azcn-sQp6wmEdd99Ql5UddjnIPs" class="w-full h-full object-cover" alt="Surplus Pangan Tangerang">
+            <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/30 to-transparent"></div>
+            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+              <span class="text-[11px] font-bold text-primary">Pasar Induk ⇄ UMKM Tangerang</span>
+            </div>
+            <div class="absolute bottom-3 right-3 bg-secondary-container text-white px-2.5 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-sm">
+              <span class="material-symbols-outlined text-[14px]">bolt</span>
+              Flash Rescue Subuh
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 flex flex-col gap-3.5">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">Ekonomi Sirkular B2B</span>
+              <span class="text-xs text-on-surface-variant font-medium">Kota Tangerang</span>
+            </div>
+            <h1 class="font-headline text-xl font-extrabold text-on-surface tracking-tight leading-tight">
+              Ubah Surplus Pangan Jadi Cuan & Berkah Berkelanjutan
+            </h1>
+            <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+              Platform hyperlocal terintegrasi menyelamatkan produk segar pasar induk untuk UMKM kuliner dengan harga dinamis & pengawasan mutu DKP.
+            </p>
+          </div>
+
+          <!-- Impact KPI ticker -->
+          <div class="grid grid-cols-3 gap-2 p-3 bg-surface-container rounded-2xl border border-surface-container-high">
+            <div class="text-center">
+              <span class="block font-headline text-base font-extrabold text-primary">12.4 Ton</span>
+              <span class="text-[10px] text-on-surface-variant">Diselamatkan</span>
+            </div>
+            <div class="text-center border-x border-outline-variant/40">
+              <span class="block font-headline text-base font-extrabold text-secondary">840+</span>
+              <span class="text-[10px] text-on-surface-variant">Mitra UMKM</span>
+            </div>
+            <div class="text-center">
+              <span class="block font-headline text-base font-extrabold text-tertiary">Rp 2.1M</span>
+              <span class="text-[10px] text-on-surface-variant">Hemat HPP</span>
+            </div>
+          </div>
+
+          <!-- Choose Role Selection -->
+          <div class="flex flex-col gap-2 pt-1">
+            <span class="text-xs font-bold text-on-surface">Pilih Peran Anda untuk Masuk:</span>
+            
+            <div class="grid grid-cols-2 gap-2.5">
+              <!-- Buyer Role Card -->
+              <div id="role-choice-buyer" onclick="selectRole('buyer')" class="cursor-pointer p-3 rounded-2xl border-2 border-primary bg-primary/5 flex flex-col gap-2 transition-all">
+                <div class="flex items-center justify-between">
+                  <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[18px]">restaurant</span>
+                  </div>
+                  <span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                </div>
+                <div>
+                  <h3 class="font-headline text-xs font-bold text-on-surface">Pembeli UMKM</h3>
+                  <p class="text-[10px] text-on-surface-variant leading-tight mt-0.5">Resto, katering, warteg & olahan kuliner.</p>
+                </div>
+              </div>
+
+              <!-- Supplier Role Card -->
+              <div id="role-choice-supplier" onclick="selectRole('supplier')" class="cursor-pointer p-3 rounded-2xl border-2 border-transparent bg-surface-container flex flex-col gap-2 transition-all hover:bg-surface-container-high">
+                <div class="flex items-center justify-between">
+                  <div class="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[18px]">storefront</span>
+                  </div>
+                  <span class="material-symbols-outlined text-outline text-[18px]">radio_button_unchecked</span>
+                </div>
+                <div>
+                  <h3 class="font-headline text-xs font-bold text-on-surface">Pemasok Lapak</h3>
+                  <p class="text-[10px] text-on-surface-variant leading-tight mt-0.5">Pedagang Pasar Induk Tanah Tinggi & grosir.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col gap-2 pt-1">
+            <button onclick="navigateTo('login')" class="w-full py-3.5 px-4 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+              <span>Mulai Sekarang / Masuk</span>
+              <span class="material-symbols-outlined text-base">arrow_forward</span>
+            </button>
+
+            <!-- Verificator Shortcut -->
+            <button onclick="navigateTo('verif-onboarding')" class="w-full py-2.5 px-3 rounded-xl border border-surface-container-high bg-surface-container text-on-surface-variant hover:text-primary font-headline text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+              <span class="material-symbols-outlined text-[16px] text-tertiary">verified_user</span>
+              <span>Portal Petugas Verifikator DKP</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 2 / L-02: PENGGUNA NORMAL - LOGIN & MASUK                           -->
+      <!-- ========================================================================= -->
+      <section id="view-login" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md">
+              <span class="material-symbols-outlined text-2xl">eco</span>
+            </div>
+            <div>
+              <h2 class="font-headline text-lg font-bold text-on-surface">Masuk ke TANG-LOOP</h2>
+              <p class="text-xs text-on-surface-variant">Akses cepat via WhatsApp OTP & Verifikasi B2B</p>
+            </div>
+          </div>
+
+          <!-- Visual highlight cards -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="relative overflow-hidden rounded-xl bg-surface-container p-2.5 flex flex-col justify-end h-20 shadow-sm">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2xTsIWJvcF2JOIXAa8QT5FFe9ugml9WOqgbWNGSchzgdAEKh8OmWZpZPz5_f4wQLXupGMZj7WpZs78vk1_r-yAwsFZUex1w_Aqf2s4MbRLh1afw1XJI6RpnrPdQviLuy4wwXBkdwTsexMwfW9LF6R7hkFhkGMOszRUrAnvyVkwJk2mMqRPYIT6aO_W5jGGV-BSemjGrxQeKHGmy_xYC3mH4hz7syNhWV3sM9OJZg" class="absolute inset-0 w-full h-full object-cover" alt="Pasar Induk">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+              <div class="relative z-10 text-white">
+                <span class="text-[9px] font-bold uppercase text-emerald-300">Pasar Induk</span>
+                <p class="font-headline text-xs font-bold leading-tight">Grosir Surplus</p>
+              </div>
+            </div>
+            <div class="relative overflow-hidden rounded-xl bg-surface-container p-2.5 flex flex-col justify-end h-20 shadow-sm">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDLZuzMiBLSukIE9Sw2KEWmwHS_ZRF-6DeLmZwzmVhdv7NtX5WiKVuTp0z9sRIXiEAayMuejwLGnkiUGR5OjtnjWft_KZgyVxVdvG7BlZhoNwQQ4W4y12LHnNq0V-tdjsXE-UL0UnH08d_xEDRHk8zTkIa3v1VdcCC6BXXDIufSBTd3Npj2WbE16CKX0o_1TqVGQ2bqSi7KPRzdp0tUZT7ISlwIUZjrBv9Q6Nj_Xw" class="absolute inset-0 w-full h-full object-cover" alt="UMKM">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+              <div class="relative z-10 text-white">
+                <span class="text-[9px] font-bold uppercase text-amber-300">UMKM Kuliner</span>
+                <p class="font-headline text-xs font-bold leading-tight">Hemat 60% HPP</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-surface-container border border-surface-container-high flex flex-col gap-3">
+            <label class="block">
+              <span class="text-xs font-bold text-on-surface block mb-1">Nomor WhatsApp Terdaftar</span>
+              <div class="relative flex items-center">
+                <span class="absolute left-3 text-xs font-bold text-on-surface-variant">+62</span>
+                <input id="login-phone" type="tel" value="81298765432" class="w-full pl-12 pr-4 py-2.5 rounded-xl bg-white text-on-surface font-headline text-sm font-semibold border border-outline-variant focus:outline-none focus:border-primary">
+              </div>
+            </label>
+
+            <!-- OTP trigger & simulation -->
+            <button onclick="sendOTPCode()" class="w-full py-2.5 rounded-xl bg-surface-container-high text-primary hover:bg-primary hover:text-white font-headline text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">sms</span>
+              <span>Kirim Kode OTP WhatsApp</span>
+            </button>
+
+            <!-- 4 OTP boxes -->
+            <div id="otp-section" class="flex flex-col gap-1.5 pt-1">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-semibold text-on-surface-variant">Masukkan 4-Digit Kode OTP:</span>
+                <span class="text-[10px] text-primary font-bold">Kirim ulang (58s)</span>
+              </div>
+              <div class="grid grid-cols-4 gap-2">
+                <input type="text" maxlength="1" value="8" class="h-12 rounded-xl text-center font-headline text-lg font-bold bg-white border border-primary/40 focus:outline-none">
+                <input type="text" maxlength="1" value="8" class="h-12 rounded-xl text-center font-headline text-lg font-bold bg-white border border-primary/40 focus:outline-none">
+                <input type="text" maxlength="1" value="2" class="h-12 rounded-xl text-center font-headline text-lg font-bold bg-white border border-primary/40 focus:outline-none">
+                <input type="text" maxlength="1" value="1" class="h-12 rounded-xl text-center font-headline text-lg font-bold bg-white border border-primary/40 focus:outline-none">
+              </div>
+              <span class="text-[10px] text-outline text-center mt-0.5">Kode demo otomatis terisi: <b>8821</b></span>
+            </div>
+
+            <!-- Login button -->
+            <button onclick="performLogin()" class="w-full py-3.5 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 transition-transform active:scale-[0.98] flex items-center justify-center gap-2 mt-1">
+              <span class="material-symbols-outlined text-base">lock_open</span>
+              <span>Verifikasi & Masuk Beranda</span>
+            </button>
+          </div>
+
+          <!-- Quick switcher demo profiles -->
+          <div class="p-3 bg-surface-container-low rounded-xl border border-dashed border-outline-variant/60 flex flex-col gap-2">
+            <span class="text-[11px] font-bold text-on-surface-variant flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px] text-primary">science</span>
+              Mode Cepat Pengujian:
+            </span>
+            <div class="flex gap-2">
+              <button onclick="loginAsPreset('buyer')" class="flex-1 py-1.5 px-2 rounded-lg bg-white font-headline text-[11px] font-semibold text-primary border border-primary/30 hover:bg-primary/10">
+                Masuk sbg Pembeli UMKM
+              </button>
+              <button onclick="loginAsPreset('supplier')" class="flex-1 py-1.5 px-2 rounded-lg bg-white font-headline text-[11px] font-semibold text-secondary border border-secondary/30 hover:bg-secondary/10">
+                Masuk sbg Pemasok Lapak
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 3 / L-03: BERANDA LOT TANG-LOOP (KATALOG UTAMA)                      -->
+      <!-- ========================================================================= -->
+      <section id="view-beranda" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3">
+          
+          <!-- Search Bar -->
+          <div class="relative flex items-center w-full">
+            <span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">search</span>
+            <input id="lot-search-input" onkeyup="filterLots()" type="text" placeholder="Cari komoditas, sawi, tomat, lapak..." class="w-full pl-9 pr-8 py-2.5 rounded-xl bg-surface-container text-xs text-on-surface font-medium border border-transparent focus:border-primary focus:outline-none">
+            <button onclick="clearLotSearch()" class="material-symbols-outlined absolute right-2.5 text-outline text-base hover:text-on-surface">cancel</button>
+          </div>
+
+          <!-- Category Chips -->
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-nowrap">
+            <button onclick="setCategoryFilter('all', this)" class="category-chip px-3 py-1.5 rounded-full text-xs font-bold bg-primary text-white shadow-sm transition-all">
+              Semua Lot
+            </button>
+            <button onclick="setCategoryFilter('konsumsi', this)" class="category-chip px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant hover:text-on-surface transition-all">
+              Konsumsi UMKM
+            </button>
+            <button onclick="setCategoryFilter('pengolahan', this)" class="category-chip px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant hover:text-on-surface transition-all">
+              Olahan Sambal
+            </button>
+            <button onclick="setCategoryFilter('pakan', this)" class="category-chip px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant hover:text-on-surface transition-all">
+              Pakan Maggot
+            </button>
+            <button onclick="setCategoryFilter('kompos', this)" class="category-chip px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant hover:text-on-surface transition-all">
+              Kompos TPST
+            </button>
+          </div>
+
+          <!-- Live dynamic price banner -->
+          <div class="p-3 bg-surface-container-low rounded-2xl border border-primary/20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+              </span>
+              <div>
+                <span id="beranda-lot-count" class="font-headline text-xs font-bold text-on-surface">4 Lot Tersedia</span>
+                <span class="text-[10px] text-on-surface-variant block">Klaster Pasar Induk Tanah Tinggi</span>
+              </div>
+            </div>
+            <button onclick="navigateTo('router-ai')" class="px-2.5 py-1 rounded-lg bg-white font-headline text-[10px] font-bold text-tertiary flex items-center gap-1 shadow-sm">
+              <span class="material-symbols-outlined text-[13px]">alt_route</span>
+              Router AI
+            </button>
+          </div>
+
+          <!-- Lot Catalog Grid (2 Columns) -->
+          <div id="beranda-lot-grid" class="grid grid-cols-2 gap-2.5">
+            <!-- Dynamic Lots will be rendered here via renderBerandaLots() -->
+          </div>
+
+          <!-- Rute Valorisasi Otomatis Pod -->
+          <div onclick="navigateTo('router-ai')" class="cursor-pointer p-3.5 rounded-2xl bg-surface-container hover:bg-surface-container-high transition-all border border-surface-container-high flex items-center gap-3 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[22px]">alt_route</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5">
+                <h3 class="font-headline text-xs font-bold text-on-surface">Rute Valorisasi Otomatis AI</h3>
+                <span class="px-1.5 py-0.2 rounded-full bg-primary/10 text-primary text-[9px] font-bold">4 Tingkat</span>
+              </div>
+              <p class="text-[10px] text-on-surface-variant truncate mt-0.5">Prioritaskan konsumsi manusia sebelum pakan maggot & kompos TPST.</p>
+            </div>
+            <span class="material-symbols-outlined text-primary text-base">arrow_forward</span>
+          </div>
+
+          <!-- Armada Subuh Live Tracker Banner -->
+          <div onclick="navigateTo('lacak-armada')" class="cursor-pointer relative overflow-hidden rounded-2xl bg-slate-900 text-white p-3.5 shadow-md flex items-center justify-between">
+            <div class="relative z-10 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                <span class="material-symbols-outlined text-xl">local_shipping</span>
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                  <span class="font-headline text-xs font-bold text-white">Armada Subuh Aktif</span>
+                  <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px]">3.8°C</span>
+                </div>
+                <span class="text-[10px] text-slate-300 block mt-0.5">Isuzu Traga Refrigi #01 • ETA 14 Menit Bintaro</span>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-emerald-400 text-lg relative z-10">chevron_right</span>
+          </div>
+
+          <!-- Pemasok Lapak Unggulan Pasar Induk -->
+          <div class="flex flex-col gap-2 pt-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-on-surface">Pemasok Terverifikasi DKP</span>
+              <span class="text-[10px] text-primary font-semibold">Pasar Induk Tanah Tinggi</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div onclick="navigateTo('profil-pemasok')" class="cursor-pointer p-2.5 rounded-xl bg-surface-container border border-surface-container-high flex items-center gap-2.5 hover:bg-surface-container-high transition-colors">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRUvSW_xU8YJ-si-F0agW1MWo_3E1_wb-4Xg6grY-klPZV_POQOvdX-HOe07ySwzB_qaCd-pG60L7iyafBia0cf8yT054bOW8lZeH8TZgfLJYlglJvmLwPghRQkE-wIX1rAARGA7Fwp2Eb_Hf1LS5attR6ovGkZiSWFz9Xn0wvUcXlaepmJ79apOAaFjmGJB-F7vv1oXZZM2zT1Qq52WIYiEFwy90WuDd0-ST2Xsg" class="w-9 h-9 rounded-full object-cover border border-secondary" alt="H. Somad">
+                <div class="min-w-0 flex-1">
+                  <span class="font-headline text-xs font-bold text-on-surface block truncate">Lapak H. Somad</span>
+                  <span class="text-[10px] text-amber-600 font-bold flex items-center gap-0.5">
+                    <span class="material-symbols-outlined text-[11px]">star</span> 4.9 • Kios B-12
+                  </span>
+                </div>
+              </div>
+              <div onclick="navigateTo('profil-pemasok')" class="cursor-pointer p-2.5 rounded-xl bg-surface-container border border-surface-container-high flex items-center gap-2.5 hover:bg-surface-container-high transition-colors">
+                <div class="w-9 h-9 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs shrink-0">
+                  BD
+                </div>
+                <div class="min-w-0 flex-1">
+                  <span class="font-headline text-xs font-bold text-on-surface block truncate">Lapak Bu Dewi</span>
+                  <span class="text-[10px] text-amber-600 font-bold flex items-center gap-0.5">
+                    <span class="material-symbols-outlined text-[11px]">star</span> 4.8 • Kios C-04
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dampak Keberlanjutan Mini Banner -->
+          <div onclick="navigateTo('dasbor-dampak')" class="cursor-pointer p-3 rounded-2xl bg-surface-container-low border border-primary/20 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">eco</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-on-surface-variant font-medium block">Dampak Sirkular Tangerang</span>
+                <span class="font-headline text-xs font-extrabold text-primary">12.480 Kg Diselamatkan • 43.5% TPA</span>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-primary flex items-center gap-0.5">
+              Lihat ESG <span class="material-symbols-outlined text-[13px]">arrow_forward</span>
+            </span>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 4 / L-05: DETAIL LOT & HARGA DINAMIS                                -->
+      <!-- ========================================================================= -->
+      <section id="view-detail-lot" class="screen-view hidden">
+        <div class="relative w-full h-52 bg-surface-container overflow-hidden">
+          <img id="detail-lot-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIEPI7bgFooD9c_g3JslbwM0ahH5DMVOmp70CFKKj8tkIqrDtSGwtAAUYamN75y_8gtWfQ_Narw_aWbW9jw5-Q98PSLSNN3EILDQ4OBHzaD6Qv6X4XQJvEAGYMXTi_6ZvQLdZ2LqM_dC6JvrqP5JkOrBdpeemc2kdgHA-YwCCJHPmBT6rOJhasmhfQUrMJP-GwsCx2mzmllFu7tMchyTmGDK0fOY2fbhNxTeTGPn4" class="w-full h-full object-cover" alt="Detail Lot">
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/30"></div>
+          
+          <div class="absolute top-3 left-3 flex items-center gap-1.5">
+            <span id="detail-lot-grade" class="px-2.5 py-0.5 rounded-full bg-primary text-white font-headline text-xs font-extrabold shadow-sm">
+              Grade-A Super
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-primary font-headline text-[10px] font-bold flex items-center gap-0.5 shadow-sm">
+              <span class="material-symbols-outlined text-[12px]">verified</span>
+              DKP Terverifikasi
+            </span>
+          </div>
+
+          <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white drop-shadow-md">
+            <div>
+              <h2 id="detail-lot-title" class="font-headline text-lg font-extrabold text-white leading-tight">Sawi Hijau Manis</h2>
+              <span id="detail-lot-supplier" class="text-xs text-white/90">Lapak H. Somad • Kios B-12</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] block opacity-80">Sisa Stok</span>
+              <span id="detail-lot-stock" class="font-headline text-sm font-extrabold">45 Kg</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 flex flex-col gap-3.5">
+          <!-- Dynamic Price Card with Formula Display -->
+          <div class="p-3.5 rounded-2xl bg-surface-container border border-primary/30 flex flex-col gap-2.5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Harga Dinamis Algoritmik</span>
+                <div class="flex items-baseline gap-2">
+                  <span id="detail-lot-price" class="font-headline text-xl font-black text-primary">Rp 6.800</span>
+                  <span class="text-xs text-on-surface-variant line-through">Rp 12.000</span>
+                  <span class="text-[11px] font-bold text-secondary">/ kg</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-on-surface-variant">Sisa Umur Simpan</span>
+                <div class="flex items-center gap-1 text-secondary font-headline text-xs font-extrabold">
+                  <span class="material-symbols-outlined text-[15px]">timer</span>
+                  <span id="detail-lot-countdown">03:14:22</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mathematical Decay Curve formula explanation -->
+            <div class="p-2 bg-white rounded-xl border border-outline-variant/40 flex items-center justify-between text-[10px] font-mono text-on-surface-variant">
+              <span>P(t) = Pmin + (Pmax-Pmin) × (tsisa/Ttotal)^1.5</span>
+              <span class="font-bold text-primary">Hemat 43%</span>
+            </div>
+          </div>
+
+          <!-- Organoleptic Audit Card -->
+          <div class="p-3 bg-surface-container-low rounded-xl flex flex-col gap-1.5 border border-surface-container-high">
+            <span class="text-xs font-bold text-on-surface flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px] text-primary">task_alt</span>
+              Hasil Uji Organoleptik Pos Lapangan:
+            </span>
+            <div class="grid grid-cols-3 gap-2 text-center text-[10px] pt-1">
+              <div class="p-1.5 rounded-lg bg-white shadow-sm">
+                <span class="block font-bold text-on-surface">Warna Daun</span>
+                <span class="text-primary font-semibold">Hijau Segar 92%</span>
+              </div>
+              <div class="p-1.5 rounded-lg bg-white shadow-sm">
+                <span class="block font-bold text-on-surface">Aroma</span>
+                <span class="text-primary font-semibold">Alami / Manis</span>
+              </div>
+              <div class="p-1.5 rounded-lg bg-white shadow-sm">
+                <span class="block font-bold text-on-surface">Tekstur</span>
+                <span class="text-primary font-semibold">Renyah Padat</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Smart Lock 15 Minutes Trigger -->
+          <div class="flex flex-col gap-2 pt-1">
+            <button onclick="lockLotAndProceed()" class="w-full py-3.5 px-4 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+              <span class="material-symbols-outlined text-base">shopping_cart_checkout</span>
+              <span>Ambil Lot Ini (Kunci Kuota 15 Menit)</span>
+            </button>
+
+            <button onclick="showToast('Menghubungkan ke WhatsApp Lapak H. Somad...', 'info')" class="w-full py-2.5 px-3 rounded-xl border border-surface-container-high bg-white text-on-surface-variant font-headline text-xs font-semibold flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px] text-emerald-600">chat</span>
+              <span>Tanya Pemasok via WhatsApp</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 5 / L-04: POSTING & GRADING AI                                      -->
+      <!-- ========================================================================= -->
+      <section id="view-posting-ai" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3.5">
+          <div>
+            <h2 class="font-headline text-lg font-bold text-on-surface">Posting Lot & Grading AI</h2>
+            <p class="text-xs text-on-surface-variant">Computer vision otomatis mengevaluasi grade dan mutu pangan surplus.</p>
+          </div>
+
+          <!-- Camera / Scan Mock Area -->
+          <div class="relative w-full h-44 rounded-2xl bg-slate-900 overflow-hidden flex items-center justify-center border-2 border-dashed border-primary/40">
+            <img id="posting-preview-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj2TRcy5ZTWb6VphYb7zeq-D-PkX_Aw_SSNt-L4Kt8KiEIYshOtX9tm95WaE8_QT-enCLBnnGNjQMSGKvKD0HH5AXvtBLCAL5BMdfUA8C5qTp89k1UDnXGQRukYm85jGUTwFeWimVB0bmfIsleQ-_Mo2aLiWAHhDGiMVIEiMYfLkvVAQGrv1P8x011JNblV_t3k5jfGr8hl0mCPIM_0PeyoYP9YUMgJYbTEsmYFcI" class="w-full h-full object-cover opacity-80" alt="Scanning Camera">
+            
+            <!-- Scanner Beam overlay -->
+            <div id="ai-scanner-overlay" class="hidden absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent scanner-beam shadow-[0_0_15px_#10b981]"></div>
+            
+            <!-- Bounding Box simulation -->
+            <div id="ai-bounding-box" class="hidden absolute inset-8 border-2 border-emerald-400 rounded-lg flex flex-col justify-between p-1">
+              <span class="bg-emerald-500 text-white font-mono text-[9px] px-1 rounded w-fit">Tomat Cherry (94%)</span>
+              <span class="bg-emerald-500/80 text-white font-mono text-[9px] px-1 rounded w-fit self-end">Grade-A Organoleptik</span>
+            </div>
+
+            <div id="ai-scan-idle-badge" class="absolute bottom-3 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full text-white text-[11px] font-semibold flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-sm text-primary-container">photo_camera</span>
+              Arahkan kamera ke tumpukan komoditas
+            </div>
+          </div>
+
+          <!-- Scan Trigger Button -->
+          <button id="btn-scan-ai" onclick="runAIGradingScan()" class="w-full py-2.5 rounded-xl bg-surface-container-high text-primary hover:bg-primary hover:text-white font-headline text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm">
+            <span class="material-symbols-outlined text-[16px]">smart_toy</span>
+            <span>Mulai Scan & Grading AI</span>
+          </button>
+
+          <!-- AI Evaluation Result Card -->
+          <div id="ai-result-card" class="hidden p-3 rounded-2xl bg-surface-container border border-primary/40 flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-xs">A</span>
+                <div>
+                  <span class="font-headline text-xs font-bold text-on-surface">Rekomendasi Mutu: Grade-A</span>
+                  <span class="text-[10px] text-on-surface-variant block">Skor Keyakinan AI: <b class="text-primary font-bold">91.4%</b></span>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">Auto-Approved</span>
+            </div>
+            <p class="text-[11px] text-on-surface-variant leading-snug">
+              ✅ Pigmen kemerahan merata, bebas bercak busuk, kelembaban optimal. Memenuhi syarat langsung tayang di katalog konsumsi UMKM!
+            </p>
+          </div>
+
+          <!-- Form Details -->
+          <div class="flex flex-col gap-2.5">
+            <label class="block">
+              <span class="text-[11px] font-bold text-on-surface block mb-1">Nama Komoditas</span>
+              <input id="post-name" type="text" value="Tomat Cherry Tangerang Segar" class="w-full px-3 py-2 rounded-xl bg-white text-xs font-semibold border border-outline-variant focus:outline-none focus:border-primary">
+            </label>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="block">
+                <span class="text-[11px] font-bold text-on-surface block mb-1">Estimasi Berat (Kg)</span>
+                <input id="post-weight" type="number" value="35" class="w-full px-3 py-2 rounded-xl bg-white text-xs font-semibold border border-outline-variant focus:outline-none focus:border-primary">
+              </label>
+              <label class="block">
+                <span class="text-[11px] font-bold text-on-surface block mb-1">Harga Buka (Rp/Kg)</span>
+                <input id="post-price" type="number" value="7500" class="w-full px-3 py-2 rounded-xl bg-white text-xs font-semibold border border-outline-variant focus:outline-none focus:border-primary">
+              </label>
+            </div>
+          </div>
+
+          <!-- Action Submit -->
+          <button onclick="submitNewLot()" class="w-full py-3.5 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 flex items-center justify-center gap-2 mt-1 transition-transform active:scale-[0.98]">
+            <span class="material-symbols-outlined text-base">cloud_upload</span>
+            <span>Terbitkan Lot ke Katalog Publik</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 6 / L-06: REKOMENDASI RUTE AI (VALORIZATION ROUTER)                 -->
+      <!-- ========================================================================= -->
+      <section id="view-router-ai" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3.5">
+          <div>
+            <div class="flex items-center gap-1 text-tertiary mb-0.5">
+              <span class="material-symbols-outlined text-[16px]">alt_route</span>
+              <span class="text-[10px] font-bold uppercase tracking-wider">Circular Valorization Engine</span>
+            </div>
+            <h2 class="font-headline text-lg font-bold text-on-surface">Rekomendasi Rute AI</h2>
+            <p class="text-xs text-on-surface-variant">Hierarki 4-tingkat valorisasi limbah surplus pangan Kota Tangerang.</p>
+          </div>
+
+          <!-- Current active lot card -->
+          <div class="p-3 bg-surface-container rounded-xl flex items-center justify-between border border-surface-container-high">
+            <div class="flex items-center gap-2.5">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpLYJKf7oibDu0bDXgjTMGT32EdXVvDQsbQ7yZQFkHZTvenxd5iiaDAydaZryXL75hAlp0M5ANUcKFjIYm0yNVbcMTZjQ45XF_gfX52yBsuSGlHHzqMzIiNKFphnO4wr-l9m8D5y0JA2CqQLyh3lvEAfKdy09n5R9LS0iC8HrBrUdIbKY9Uj2hTzrdCYkc6irqdJnDqBzvh7Xjl1a7SmuoGe0Fetc0npHMFmdwLQA" class="w-10 h-10 rounded-lg object-cover" alt="Lot">
+              <div>
+                <span class="font-headline text-xs font-bold text-on-surface">Tomat Cherry Sortir Pasar</span>
+                <span class="text-[10px] text-on-surface-variant block">Sisa 35 Kg • Umur Simpan 14 Jam</span>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-primary">Nilai Rp 262.500</span>
+          </div>
+
+          <!-- 4 Valorization Tiers -->
+          <div class="flex flex-col gap-2">
+            <!-- Tier 1 -->
+            <div class="p-3 rounded-2xl border-2 border-primary bg-primary/5 flex flex-col gap-1.5 shadow-sm">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">1</span>
+                  <span class="font-headline text-xs font-bold text-on-surface">Konsumsi Langsung UMKM Kuliner</span>
+                </div>
+                <span class="text-[11px] font-extrabold text-primary">Kesesuaian 88%</span>
+              </div>
+              <p class="text-[10px] text-on-surface-variant leading-relaxed">
+                Rekomendasi Utama: Dialihkan ke mitra katering & warteg Bintaro untuk bahan masakan hari ini.
+              </p>
+              <div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 88%"></div>
+              </div>
+            </div>
+
+            <!-- Tier 2 -->
+            <div class="p-3 rounded-2xl border border-surface-container-high bg-surface-container flex flex-col gap-1.5 opacity-90">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-secondary text-white text-xs font-bold flex items-center justify-center">2</span>
+                  <span class="font-headline text-xs font-bold text-on-surface">Pengolahan Pangan (Pasta / Sambal)</span>
+                </div>
+                <span class="text-[11px] font-bold text-secondary">Kesesuaian 65%</span>
+              </div>
+              <p class="text-[10px] text-on-surface-variant leading-relaxed">
+                Alternatif jika tidak terserap dalam 4 jam: Bahan baku saus/sambal kemasan UMKM Cipondoh.
+              </p>
+              <div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+                <div class="bg-secondary h-full rounded-full" style="width: 65%"></div>
+              </div>
+            </div>
+
+            <!-- Tier 3 -->
+            <div class="p-3 rounded-2xl border border-surface-container-high bg-surface-container flex flex-col gap-1.5 opacity-80">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-tertiary text-white text-xs font-bold flex items-center justify-center">3</span>
+                  <span class="font-headline text-xs font-bold text-on-surface">Pakan Ternak Maggot BSF & Lele</span>
+                </div>
+                <span class="text-[11px] font-bold text-tertiary">Kesesuaian 42%</span>
+              </div>
+              <div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+                <div class="bg-tertiary h-full rounded-full" style="width: 42%"></div>
+              </div>
+            </div>
+
+            <!-- Tier 4 -->
+            <div class="p-3 rounded-2xl border border-surface-container-high bg-surface-container flex flex-col gap-1.5 opacity-70">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-outline text-white text-xs font-bold flex items-center justify-center">4</span>
+                  <span class="font-headline text-xs font-bold text-on-surface">Kompos Organik TPST Rawa Kucing</span>
+                </div>
+                <span class="text-[11px] font-bold text-outline">Kesesuaian 18%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apply Route Button -->
+          <button onclick="applyValorizationRoute()" class="w-full py-3.5 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+            <span class="material-symbols-outlined text-base">check_circle</span>
+            <span>Terapkan Rute Konsumsi Langsung UMKM</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 7 / L-07: JADWAL PICKUP & LOGISTIK SUBUH                            -->
+      <!-- ========================================================================= -->
+      <section id="view-jadwal-logistik" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3.5">
+          <div>
+            <h2 class="font-headline text-lg font-bold text-on-surface">Jadwal Pickup & Logistik Subuh</h2>
+            <p class="text-xs text-on-surface-variant">Rantai dingin (Cold-Chain) terkontrol armada Isuzu Traga Refrigi Pemkot Tangerang.</p>
+          </div>
+
+          <!-- 15-Minute Smart Lock Warning Pill -->
+          <div class="p-3 rounded-2xl bg-secondary-container/15 border border-secondary/30 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-secondary text-xl animate-pulse">lock_clock</span>
+              <div>
+                <span class="font-headline text-xs font-bold text-secondary">Smart Lock Aktif</span>
+                <span class="text-[10px] text-on-surface-variant block">Kuota lot terkunci eksklusif untuk Anda</span>
+              </div>
+            </div>
+            <span id="smart-lock-clock" class="font-mono text-xs font-black text-secondary">14:59</span>
+          </div>
+
+          <!-- Pickup Time Slot Selector -->
+          <div class="flex flex-col gap-2">
+            <span class="text-xs font-bold text-on-surface">Pilih Slot Armada Subuh:</span>
+            
+            <div class="flex flex-col gap-2">
+              <label class="p-3 rounded-xl border-2 border-primary bg-primary/5 flex items-center justify-between cursor-pointer">
+                <div class="flex items-center gap-2.5">
+                  <input type="radio" name="slot" checked class="text-primary focus:ring-primary">
+                  <div>
+                    <span class="font-headline text-xs font-bold text-on-surface block">04:00 - 04:30 WIB (Paling Rekomendasi)</span>
+                    <span class="text-[10px] text-on-surface-variant">Armada Refrigi #01 • Suhu 3.8°C Terjaga</span>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">Siap</span>
+              </label>
+
+              <label class="p-3 rounded-xl border border-surface-container-high bg-white flex items-center justify-between cursor-pointer">
+                <div class="flex items-center gap-2.5">
+                  <input type="radio" name="slot" class="text-primary focus:ring-primary">
+                  <div>
+                    <span class="font-headline text-xs font-bold text-on-surface block">04:30 - 05:00 WIB</span>
+                    <span class="text-[10px] text-on-surface-variant">Armada Refrigi #02 • Suhu 4.0°C</span>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold">Tersedia</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Route Info -->
+          <div class="p-3 bg-surface-container-low rounded-xl border border-surface-container-high flex flex-col gap-2">
+            <div class="flex items-center justify-between text-xs font-semibold">
+              <span class="text-on-surface-variant">Titik Ambil:</span>
+              <span id="pickup-lot-origin" class="text-on-surface font-bold">Pasar Induk Tanah Tinggi (Kios B-12)</span>
+            </div>
+            <div class="flex items-center justify-between text-xs font-semibold">
+              <span class="text-on-surface-variant">Tujuan Antar:</span>
+              <span id="pickup-buyer-dest" class="text-on-surface font-bold">Warung Bu Sri (Bintaro Sektor 9)</span>
+            </div>
+            <div class="flex items-center justify-between text-xs font-semibold pt-1 border-t border-outline-variant/30">
+              <span class="text-on-surface-variant">Tarif Logistik Bersubsidi:</span>
+              <span id="pickup-delivery-cost" class="text-primary font-bold">Rp 15.000 <span class="line-through text-outline font-normal">Rp 30.000</span></span>
+            </div>
+          </div>
+
+          <!-- Confirm Booking -->
+          <button onclick="confirmPickupBooking()" class="w-full py-3.5 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+            <span class="material-symbols-outlined text-base">local_shipping</span>
+            <span>Konfirmasi & Terbitkan Surat Jalan</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 8 / L-11: PELACAKAN LANGSUNG ARMADA SUBUH                           -->
+      <!-- ========================================================================= -->
+      <section id="view-lacak-armada" class="screen-view hidden">
+        <!-- Live GPS Map Placeholder -->
+        <div class="relative w-full h-52 bg-slate-900 overflow-hidden">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA2mENhiYZC6Pa-H44_IEb6n2hPBikcSPUhMKPA4-vFX-tjynE5rCdQMxOSmj8jNdh5VI8sj_5Be-QjzCBpba6Uc5jSiDPrwB5OYA1lYqEI8DuoOfbMbpcJh5_rMkjSHUWzcoYOUvtMIN0lpOlBaRx2Rikb5mXChNsIw1qoFxjNscoG3luHH-fJZjVmnRNa3i3AjWRaBOneprqbYljCqhtnDNmGkdprfto6J-LzRs" class="w-full h-full object-cover opacity-75" alt="Peta GPS">
+          
+          <!-- Moving Truck Radar Marker -->
+          <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+            <div class="w-12 h-12 rounded-full bg-emerald-500/30 radar-ring absolute"></div>
+            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-2 border-white relative z-10">
+              <span class="material-symbols-outlined text-[17px]">local_shipping</span>
+            </div>
+          </div>
+
+          <!-- Status badge top -->
+          <div class="absolute top-3 left-3 bg-slate-900/85 backdrop-blur-md px-3 py-1 rounded-full text-white text-[11px] font-semibold flex items-center gap-2 shadow-md">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>Dalam Perjalanan • ETA 14 Menit</span>
+          </div>
+        </div>
+
+        <div class="p-4 flex flex-col gap-3.5">
+          <!-- Real-Time IoT Cold Chain Telemetry Sensor Card -->
+          <div class="p-3.5 rounded-2xl bg-surface-container border border-primary/40 flex flex-col gap-2 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">thermostat</span>
+                <span class="font-headline text-xs font-bold text-on-surface">Telemetri Sensor IoT Rantai Dingin</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-mono text-[10px] font-bold">LIVE TELEMETRY</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center pt-1">
+              <div class="p-2 rounded-xl bg-white border border-outline-variant/30">
+                <span class="text-[10px] text-on-surface-variant block">Suhu Boks</span>
+                <span id="telemetry-temp" class="font-headline text-sm font-extrabold text-primary">3.8°C</span>
+              </div>
+              <div class="p-2 rounded-xl bg-white border border-outline-variant/30">
+                <span class="text-[10px] text-on-surface-variant block">Kelembaban</span>
+                <span class="font-headline text-sm font-extrabold text-on-surface">82% RH</span>
+              </div>
+              <div class="p-2 rounded-xl bg-white border border-outline-variant/30">
+                <span class="text-[10px] text-on-surface-variant block">Status Boks</span>
+                <span class="font-headline text-xs font-extrabold text-primary">Terkunci ✓</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Driver info -->
+          <div class="p-3 bg-surface-container-low rounded-xl flex items-center justify-between border border-surface-container-high">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold text-sm">
+                SP
+              </div>
+              <div>
+                <span class="font-headline text-xs font-bold text-on-surface">Supriyanto (Driver Armada #01)</span>
+                <span class="text-[10px] text-on-surface-variant block">Isuzu Traga Refrigi • Plat B 9421 CAB</span>
+              </div>
+            </div>
+            <button onclick="showToast('Menghubungi Driver Supriyanto via Telepon...', 'info')" class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-sm">
+              <span class="material-symbols-outlined text-[17px]">call</span>
+            </button>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="flex flex-col gap-2 pt-1">
+            <button onclick="navigateTo('bukti-mutu')" class="w-full py-3.5 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+              <span class="material-symbols-outlined text-base">description</span>
+              <span>Lihat Bukti Mutu & Surat Jalan Digital</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 9 / L-12: UNDUH BUKTI MUTU & SURAT JALAN DIGITAL                    -->
+      <!-- ========================================================================= -->
+      <section id="view-bukti-mutu" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3.5">
+          <div>
+            <h2 class="font-headline text-lg font-bold text-on-surface">Bukti Mutu & Surat Jalan</h2>
+            <p class="text-xs text-on-surface-variant">Sertifikat digital terverifikasi kriptografis Pemkot Tangerang.</p>
+          </div>
+
+          <!-- Official Document Certificate Sheet -->
+          <div class="p-4 rounded-2xl bg-white border-2 border-primary/30 shadow-md flex flex-col gap-3 text-slate-800">
+            <div class="flex items-center justify-between border-b pb-2.5">
+              <div>
+                <span class="font-headline text-xs font-black text-primary tracking-wider uppercase block">PEMERINTAH KOTA TANGERANG</span>
+                <span class="text-[9px] text-slate-500 font-semibold">Dinas Ketahanan Pangan (DKP) • Sertifikasi Mutu</span>
+              </div>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 text-primary flex items-center justify-center border border-primary/20">
+                <span class="material-symbols-outlined text-[20px]">verified</span>
+              </div>
+            </div>
+
+            <!-- SHA-256 Hash Display -->
+            <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[9px] font-bold text-slate-500 uppercase block mb-0.5">Hash SHA-256 Integritas Data:</span>
+              <span id="cert-hash" class="font-mono text-[9px] text-slate-700 break-all select-all">sha256-a94f8fe5ccb19ba61c4c0873d391e987982fbbd3</span>
+            </div>
+
+            <!-- Certified Items Table -->
+            <div class="flex flex-col gap-1 text-[11px]">
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-500">Nomor Dokumen:</span>
+                <span id="cert-doc-num" class="font-bold text-slate-800 font-mono">SJ-TANG-2026-0814</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-500">Komoditas:</span>
+                <span id="cert-commodity" class="font-bold text-slate-800">Sawi Hijau Manis Segar (Grade-B)</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-500">Berat Bersih:</span>
+                <span id="cert-weight" class="font-bold text-slate-800">45.00 Kg (Timbangan IoT BLE Valid)</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-500">Petugas Inspeksi:</span>
+                <span id="cert-inspector" class="font-bold text-slate-800">H. Joko Susilo, S.Pt (NIP. 19820412 200604 1 003)</span>
+              </div>
+            </div>
+
+            <!-- QR Verification Placeholder -->
+            <div class="flex items-center justify-between pt-1">
+              <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center border border-slate-200">
+                <span class="material-symbols-outlined text-2xl text-slate-700">qr_code_2</span>
+              </div>
+              <div class="text-right">
+                <span class="text-[9px] text-slate-400 block">Diterbitkan Otomatis:</span>
+                <span id="cert-timestamp" class="text-[10px] font-bold text-emerald-700">03 Nov 2026 • 04:15 WIB</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-col gap-2">
+            <button onclick="downloadPDFCertificate()" class="w-full py-3.5 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+              <span class="material-symbols-outlined text-base">download</span>
+              <span>Unduh Dokumen PDF Resmi</span>
+            </button>
+            <button onclick="shareToWhatsApp()" class="w-full py-2.5 rounded-xl bg-surface-container font-headline text-xs font-semibold text-on-surface flex items-center justify-center gap-1.5 border border-surface-container-high">
+              <span class="material-symbols-outlined text-[16px] text-emerald-600">share</span>
+              <span>Kirim Salinan ke WhatsApp Pemesan</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 10 / L-08: DASBOR DAMPAK KEBERLANJUTAN (ESG & METRIK SIRKULAR)      -->
+      <!-- ========================================================================= -->
+      <section id="view-dasbor-dampak" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3.5">
+          <div>
+            <div class="flex items-center gap-1 text-primary mb-0.5">
+              <span class="material-symbols-outlined text-[16px]">eco</span>
+              <span class="text-[10px] font-bold uppercase tracking-wider">Laporan Dampak Kota Tangerang</span>
+            </div>
+            <h2 class="font-headline text-lg font-bold text-on-surface">Dasbor Dampak Keberlanjutan</h2>
+            <p class="text-xs text-on-surface-variant">Metrik terukur reduksi emisi, penyelamatan pangan, dan diversifikasi TPA Rawa Kucing.</p>
+          </div>
+
+          <!-- 4 Grid KPI Cards -->
+          <div class="grid grid-cols-2 gap-2.5">
+            <div class="p-3 rounded-2xl bg-surface-container border border-primary/20 flex flex-col gap-1">
+              <span class="text-[10px] font-bold text-on-surface-variant uppercase">Pangan Diselamatkan</span>
+              <span id="esg-rescued-kg" class="font-headline text-lg font-extrabold text-primary">12.480 Kg</span>
+              <span class="text-[9px] text-primary font-semibold">↑ +18% dari bulan lalu</span>
+            </div>
+            <div class="p-3 rounded-2xl bg-surface-container border border-secondary/20 flex flex-col gap-1">
+              <span class="text-[10px] font-bold text-on-surface-variant uppercase">Reduksi Emisi Gas</span>
+              <span id="esg-co2e-ton" class="font-headline text-lg font-extrabold text-secondary">31.2 Ton CO₂e</span>
+              <span class="text-[9px] text-secondary font-semibold">Setara 420 bibit pohon</span>
+            </div>
+            <div class="p-3 rounded-2xl bg-surface-container border border-tertiary/20 flex flex-col gap-1">
+              <span class="text-[10px] font-bold text-on-surface-variant uppercase">Beban TPA Berkurang</span>
+              <span id="esg-tpa-pct" class="font-headline text-lg font-extrabold text-tertiary">43.5%</span>
+              <span class="text-[9px] text-tertiary font-semibold">TPA Rawa Kucing</span>
+            </div>
+            <div class="p-3 rounded-2xl bg-surface-container border border-outline-variant/40 flex flex-col gap-1">
+              <span class="text-[10px] font-bold text-on-surface-variant uppercase">Nilai Ekonomi UMKM</span>
+              <span id="esg-hpp-saved" class="font-headline text-lg font-extrabold text-on-surface">Rp 2,14 Miliar</span>
+              <span class="text-[9px] text-on-surface-variant font-semibold">Total HPP Dihemat</span>
+            </div>
+          </div>
+
+          <!-- SDG Alignment Cards -->
+          <div class="p-3.5 bg-surface-container-low rounded-2xl border border-surface-container-high flex flex-col gap-2">
+            <span class="text-xs font-bold text-on-surface">Capaian Sustainable Development Goals (SDG):</span>
+            
+            <div class="flex flex-col gap-2 pt-1 text-[11px]">
+              <div>
+                <div class="flex justify-between font-semibold mb-1">
+                  <span>SDG 2: Tanpa Kelaparan (Zero Hunger)</span>
+                  <span class="font-bold text-primary">78% Target</span>
+                </div>
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                  <div class="bg-primary h-full rounded-full" style="width: 78%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between font-semibold mb-1">
+                  <span>SDG 12: Konsumsi & Produksi Bertanggung Jawab</span>
+                  <span class="font-bold text-secondary">92% Target</span>
+                </div>
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                  <div class="bg-secondary h-full rounded-full" style="width: 92%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between font-semibold mb-1">
+                  <span>SDG 11: Kota & Pemukiman Berkelanjutan</span>
+                  <span class="font-bold text-tertiary">65% Target</span>
+                </div>
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                  <div class="bg-tertiary h-full rounded-full" style="width: 65%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Export Report Button -->
+          <button onclick="showToast('Laporan Audit Bappeda/CSR Berhasil Diekspor (PDF)!', 'success')" class="w-full py-3.5 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+            <span class="material-symbols-outlined text-base">picture_as_pdf</span>
+            <span>Ekspor Laporan Audit Bappeda & CSR</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 11 / L-09: PROFIL PENGGUNA & RIWAYAT PESANAN (PEMBELI UMKM)         -->
+      <!-- ========================================================================= -->
+      <section id="view-profil-pembeli" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3.5">
+          <!-- Profile Card -->
+          <div class="p-4 rounded-2xl bg-surface-container border border-surface-container-high flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAShPUUOkssceTDf6XV6Iw_50IJ0i6qHkyoBm2b2myH2Iyk8uM45bVOHLcN6M4NvG9bFFnWIm2iNsk03L7nfmkUcsgX4WSBBnKvIrbN3t9Etrt0dyJWUbMeKwhdkiYatY6Y4BUi95urRyP8fdgu6wnOnATpu0s4UVY_LCsH3L5RdKOiLpeqj1QlL7lojCEuIsAll95bwAglwQ0OVvpIdtweBOqfJ_9Az1i95rtdAh4" class="w-12 h-12 rounded-full object-cover border-2 border-primary" alt="Bu Sri">
+              <div>
+                <h3 class="font-headline text-sm font-bold text-on-surface">Warung Bu Sri</h3>
+                <span class="text-xs text-on-surface-variant block">Bintaro Sektor 9 • Kuliner UMKM</span>
+                <span class="inline-block mt-0.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-bold">Mitra Terverifikasi DKP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total Saved Stats -->
+          <div class="p-3 bg-surface-container-low rounded-xl border border-primary/20 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-on-surface-variant block font-semibold">Total HPP Berhasil Dihemat</span>
+              <span class="font-headline text-base font-black text-primary">Rp 4.250.000</span>
+            </div>
+            <span class="material-symbols-outlined text-2xl text-primary">savings</span>
+          </div>
+
+          <!-- Switch to Supplier Profile Mode -->
+          <button onclick="navigateTo('profil-pemasok')" class="w-full py-2.5 px-3 rounded-xl bg-surface-container-high text-secondary hover:bg-secondary hover:text-white font-headline text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">storefront</span>
+            <span>Beralih ke Profil Pemasok Lapak Pasar</span>
+          </button>
+
+          <!-- Order History -->
+          <div class="flex flex-col gap-2">
+            <span class="text-xs font-bold text-on-surface">Riwayat & Pesanan Aktif:</span>
+            <div id="buyer-orders-container" class="flex flex-col gap-2">
+
+            <!-- Active Order Item -->
+            <div class="p-3 bg-white rounded-xl border border-primary/30 flex flex-col gap-2 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono text-primary font-bold">ORD-20261103-01</span>
+                <span class="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[9px] font-bold">Armada Subuh Berjalan</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-headline text-xs font-bold text-on-surface block">Sawi Hijau Manis (45 Kg)</span>
+                  <span class="text-[10px] text-on-surface-variant">Lapak H. Somad • Rp 306.000</span>
+                </div>
+                <button onclick="navigateTo('lacak-armada')" class="px-2.5 py-1 rounded-lg bg-primary text-white font-headline text-[10px] font-bold">
+                  Lacak Kurir
+                </button>
+              </div>
+            </div>
+
+            <!-- Past Order Item -->
+            <div class="p-3 bg-white rounded-xl border border-outline-variant/40 flex items-center justify-between">
+              <div>
+                <span class="font-headline text-xs font-bold text-on-surface block">Tomat Cherry Sortir (30 Kg)</span>
+                <span class="text-[10px] text-on-surface-variant">Kemarin Subuh • Selesai Diterima</span>
+              </div>
+              <button onclick="navigateTo('bukti-mutu')" class="px-2.5 py-1 rounded-lg bg-surface-container font-headline text-[10px] font-bold text-on-surface">
+                Bukti Mutu
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 12 / L-10: PROFIL PEMASOK LAPAK PASAR INDUK                         -->
+      <!-- ========================================================================= -->
+      <section id="view-profil-pemasok" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3.5">
+          <!-- Supplier Lapak Profile Header -->
+          <div class="p-4 rounded-2xl bg-surface-container border border-surface-container-high flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRUvSW_xU8YJ-si-F0agW1MWo_3E1_wb-4Xg6grY-klPZV_POQOvdX-HOe07ySwzB_qaCd-pG60L7iyafBia0cf8yT054bOW8lZeH8TZgfLJYlglJvmLwPghRQkE-wIX1rAARGA7Fwp2Eb_Hf1LS5attR6ovGkZiSWFz9Xn0wvUcXlaepmJ79apOAaFjmGJB-F7vv1oXZZM2zT1Qq52WIYiEFwy90WuDd0-ST2Xsg" class="w-12 h-12 rounded-full object-cover border-2 border-secondary" alt="Pemasok Lapak">
+              <div>
+                <h3 class="font-headline text-sm font-bold text-on-surface">Lapak H. Somad</h3>
+                <span class="text-xs text-on-surface-variant block">Pasar Induk Tanah Tinggi • Blok B-12</span>
+                <div class="flex items-center gap-1 mt-0.5">
+                  <span class="material-symbols-outlined text-[13px] text-amber-500">star</span>
+                  <span class="text-[10px] font-bold text-on-surface">4.9 (128 Lot Terjual)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Supplier Metrics -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-surface-container-low border border-secondary/20">
+              <span class="text-[10px] text-on-surface-variant block">Omzet Surplus Bulan Ini</span>
+              <span class="font-headline text-sm font-extrabold text-secondary">Rp 18.750.000</span>
+            </div>
+            <div class="p-3 rounded-xl bg-surface-container-low border border-primary/20">
+              <span class="text-[10px] text-on-surface-variant block">Pangan Terselamatkan</span>
+              <span class="font-headline text-sm font-extrabold text-primary">3.420 Kg</span>
+            </div>
+          </div>
+
+          <!-- Action Add Lot -->
+          <button onclick="navigateTo('posting-ai')" class="w-full py-3.5 rounded-xl bg-secondary text-white font-headline font-bold text-sm shadow-md hover:bg-secondary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+            <span class="material-symbols-outlined text-base">add_circle</span>
+            <span>Posting Lot Surplus Baru Sekarang</span>
+          </button>
+
+          <!-- Active Lapak Lots -->
+          <div class="flex flex-col gap-2">
+            <span class="text-xs font-bold text-on-surface">Lot Aktif Lapak Saya:</span>
+            
+            <div class="p-3 bg-white rounded-xl border border-surface-container-high flex items-center justify-between">
+              <div>
+                <span class="font-headline text-xs font-bold text-on-surface block">Sawi Hijau Manis (45 Kg)</span>
+                <span class="text-[10px] text-emerald-600 font-semibold">Sedang Ditawar 3 UMKM</span>
+              </div>
+              <button onclick="showToast('Lot ditutup dari penawaran.', 'info')" class="text-xs text-rose-600 font-bold px-2 py-1">Tutup</button>
+            </div>
+          </div>
+
+          <button onclick="navigateTo('profil-pembeli')" class="w-full py-2.5 rounded-xl bg-surface-container font-headline text-xs font-semibold text-on-surface-variant hover:text-on-surface text-center">
+            ← Kembali ke Tampilan Pembeli UMKM
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 13 / L-13: VERIFIKATOR - ONBOARDING SOP                             -->
+      <!-- ========================================================================= -->
+      <section id="view-verif-onboarding" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3.5">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-tertiary text-white flex items-center justify-center shadow-md">
+              <span class="material-symbols-outlined text-xl">policy</span>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold text-tertiary uppercase tracking-wider">Tim Inspeksi Lapangan DKP</span>
+              <h2 class="font-headline text-base font-bold text-on-surface">Standard Operating Procedure (SOP)</h2>
+            </div>
+          </div>
+
+          <p class="text-xs text-on-surface-variant leading-relaxed">
+            Petugas pos jaga pasar wajib memvalidasi mutu produk sebelum sertifikat SHA-256 diterbitkan ke publik.
+          </p>
+
+          <!-- 3 SOP Pillars -->
+          <div class="flex flex-col gap-2.5">
+            <div class="p-3 rounded-2xl bg-surface-container border border-surface-container-high flex gap-3">
+              <span class="w-7 h-7 rounded-full bg-tertiary/15 text-tertiary font-bold text-xs flex items-center justify-center shrink-0">1</span>
+              <div>
+                <h4 class="font-headline text-xs font-bold text-on-surface">Human-in-the-Loop Verification</h4>
+                <p class="text-[11px] text-on-surface-variant leading-snug mt-0.5">
+                  Validasi manual visual atas hasil computer vision (skor AI &lt; 80%) untuk mencegah lolosnya pangan busuk.
+                </p>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-2xl bg-surface-container border border-surface-container-high flex gap-3">
+              <span class="w-7 h-7 rounded-full bg-tertiary/15 text-tertiary font-bold text-xs flex items-center justify-center shrink-0">2</span>
+              <div>
+                <h4 class="font-headline text-xs font-bold text-on-surface">Prosedur Higiene & Keamanan</h4>
+                <p class="text-[11px] text-on-surface-variant leading-snug mt-0.5">
+                  Sanitasi wadah krat plastik, pengecekan pestisida kasat mata, dan bebas hama tikus/lalat.
+                </p>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-2xl bg-surface-container border border-surface-container-high flex gap-3">
+              <span class="w-7 h-7 rounded-full bg-tertiary/15 text-tertiary font-bold text-xs flex items-center justify-center shrink-0">3</span>
+              <div>
+                <h4 class="font-headline text-xs font-bold text-on-surface">Kalibrasi Timbangan IoT BLE</h4>
+                <p class="text-[11px] text-on-surface-variant leading-snug mt-0.5">
+                  Sinkronisasi bluetooth langsung dari timbangan digital pasar ke database resmi platform.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="navigateTo('verif-login')" class="w-full py-3.5 rounded-xl bg-tertiary text-white font-headline font-bold text-sm shadow-md hover:bg-tertiary/90 flex items-center justify-center gap-2 mt-2 transition-transform active:scale-[0.98]">
+            <span>Saya Paham SOP, Masuk Pos Inspeksi</span>
+            <span class="material-symbols-outlined text-base">arrow_forward</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 14 / L-14: VERIFIKATOR - LOGIN PETUGAS                              -->
+      <!-- ========================================================================= -->
+      <section id="view-verif-login" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-tertiary text-white flex items-center justify-center shadow-md">
+              <span class="material-symbols-outlined text-2xl">badge</span>
+            </div>
+            <div>
+              <h2 class="font-headline text-lg font-bold text-on-surface">Login Petugas Inspeksi</h2>
+              <p class="text-xs text-on-surface-variant">Pos Jaga Pasar Induk Tanah Tinggi</p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-surface-container border border-surface-container-high flex flex-col gap-3">
+            <label class="block">
+              <span class="text-xs font-bold text-on-surface block mb-1">Nomor Induk Pegawai (NIP)</span>
+              <input type="text" value="19850314 201001 1 008" class="w-full px-3 py-2.5 rounded-xl bg-white text-on-surface font-mono text-xs font-semibold border border-outline-variant focus:outline-none focus:border-tertiary">
+            </label>
+
+            <!-- 6 PIN Dots -->
+            <div>
+              <span class="text-xs font-bold text-on-surface block mb-1.5">PIN Keamanan Shift Subuh (6 Digit)</span>
+              <div class="flex items-center justify-center gap-3 py-2 bg-white rounded-xl border border-outline-variant/40">
+                <span class="w-3.5 h-3.5 rounded-full bg-tertiary"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-tertiary"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-tertiary"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-tertiary"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-tertiary"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-tertiary"></span>
+              </div>
+            </div>
+
+            <!-- Biometric Scan simulation -->
+            <button onclick="simulateBiometric()" class="w-full py-2.5 rounded-xl bg-surface-container-high text-tertiary hover:bg-tertiary hover:text-white font-headline text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-[17px]">fingerprint</span>
+              <span>Presensi Biometrik Shift Subuh</span>
+            </button>
+
+            <!-- Submit -->
+            <button onclick="verifDoLogin()" class="w-full py-3.5 rounded-xl bg-tertiary text-white font-headline font-bold text-sm shadow-md hover:bg-tertiary/90 flex items-center justify-center gap-2 mt-1 transition-transform active:scale-[0.98]">
+              <span class="material-symbols-outlined text-base">verified_user</span>
+              <span>Buka Antrean Verifikasi Lapangan</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 15 / L-15: VERIFIKATOR - ANTREAN VERIFIKASI                         -->
+      <!-- ========================================================================= -->
+      <section id="view-verif-antrean" class="screen-view hidden">
+        <div class="p-4 flex flex-col gap-3.5">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-bold text-tertiary uppercase tracking-wider">Antrean Mutu Pangan</span>
+              <h2 class="font-headline text-base font-bold text-on-surface">Lot Menunggu Verifikasi (3)</h2>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600 font-headline text-[10px] font-bold">2 Kritis</span>
+          </div>
+
+          <!-- Queue List Items -->
+          <div id="verif-queue-container" class="flex flex-col gap-2.5">
+            <!-- Dynamically populated via renderVerifQueue() -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- LAYAR 16 / L-16: VERIFIKATOR - DETAIL INSPEKSI & OVERRIDE                 -->
+      <!-- ========================================================================= -->
+      <section id="view-verif-detail" class="screen-view hidden">
+        <div class="relative w-full h-52 bg-slate-900 overflow-hidden">
+          <img id="inspect-lot-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAu4QZGbS4m5_kqALZtaABxmHKOtxsrSsYtP_p5oMqf8akSSdEv8Cx1ivY_buOWxgtzz494QEvkEuiUbbDgTQCs9mkYzK3V9QfAqsFXW4CXepqp9aRjGfeN6BzV6ZfKfPIw5_hCSWbNO4FbV-IdQLW4B829ClJZSGqNFHNC1Pl3706UbO4i1x4asG3NoztYAAARppgTyTzoW4nuleICTO6-_ZUW7uoFoRh36u0t1vg" class="w-full h-full object-cover" alt="Inspeksi">
+          <div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-black/30"></div>
+          <div class="absolute top-3 left-3 bg-rose-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-md">
+            Skor AI 68% • Wajib Uji Sensorik
+          </div>
+        </div>
+
+        <div class="p-4 flex flex-col gap-3.5">
+          <div>
+            <h3 id="inspect-lot-name" class="font-headline text-base font-bold text-on-surface">Tomat Cherry Sortir Pasar</h3>
+            <span id="inspect-lot-pemasok" class="text-xs text-on-surface-variant block">Lapak Bu Dewi • 35 Kg Diajukan</span>
+          </div>
+
+          <!-- Organoleptic Checklist -->
+          <div class="p-3 rounded-2xl bg-surface-container border border-surface-container-high flex flex-col gap-2">
+            <span class="text-xs font-bold text-on-surface">Checklist Uji Organoleptik:</span>
+            
+            <label class="flex items-center gap-2 text-xs text-on-surface cursor-pointer">
+              <input type="checkbox" checked class="rounded text-primary focus:ring-primary">
+              <span>Warna kulit bebas bercak hitam jamur</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs text-on-surface cursor-pointer">
+              <input type="checkbox" checked class="rounded text-primary focus:ring-primary">
+              <span>Aroma segar, tidak asam fermentasi</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs text-on-surface cursor-pointer">
+              <input type="checkbox" checked class="rounded text-primary focus:ring-primary">
+              <span>Tekstur daging tidak lembek berair</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs text-on-surface cursor-pointer">
+              <input type="checkbox" checked class="rounded text-primary focus:ring-primary">
+              <span>Wadah krat plastik bersih dan higienis</span>
+            </label>
+          </div>
+
+          <!-- BLE Scale Sync Simulation -->
+          <div class="p-3 rounded-2xl bg-surface-container-low border border-primary/30 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-on-surface-variant block font-bold">Sinkronisasi Timbangan IoT BLE:</span>
+              <span id="ble-weight-text" class="font-headline text-sm font-extrabold text-primary">34.80 Kg (Tervalidasi)</span>
+            </div>
+            <button onclick="syncBLEScale()" class="px-2.5 py-1.5 rounded-lg bg-primary text-white font-headline text-[10px] font-bold flex items-center gap-1 shadow-sm">
+              <span class="material-symbols-outlined text-[13px]">bluetooth_connected</span>
+              Sync Ulang
+            </button>
+          </div>
+
+          <!-- Grade Override Selector -->
+          <div>
+            <span class="text-xs font-bold text-on-surface block mb-1.5">Keputusan Override Grade Petugas:</span>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button onclick="selectOverrideGrade('A', this)" class="override-grade-btn py-1.5 rounded-lg border border-outline-variant text-xs font-bold bg-white">Grade A</button>
+              <button onclick="selectOverrideGrade('B', this)" class="override-grade-btn py-1.5 rounded-lg border-2 border-primary bg-primary text-white text-xs font-bold">Grade B</button>
+              <button onclick="selectOverrideGrade('C', this)" class="override-grade-btn py-1.5 rounded-lg border border-outline-variant text-xs font-bold bg-white">Grade C</button>
+              <button onclick="selectOverrideGrade('Afkir', this)" class="override-grade-btn py-1.5 rounded-lg border border-outline-variant text-xs font-bold bg-white text-rose-600">Afkir</button>
+            </div>
+          </div>
+
+          <!-- Action Approve or Reject -->
+          <div class="flex flex-col gap-2 pt-1">
+            <button onclick="approveVerificationLot()" class="w-full py-3.5 rounded-xl bg-primary text-white font-headline font-bold text-sm shadow-md hover:bg-primary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+              <span class="material-symbols-outlined text-base">verified</span>
+              <span>Sahkan & Terbitkan ke Katalog Beranda Lot</span>
+            </button>
+
+            <button onclick="rejectAndRedirectToCompost()" class="w-full py-2.5 rounded-xl border border-rose-300 bg-rose-50 text-rose-700 font-headline text-xs font-bold flex items-center justify-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">recycling</span>
+              <span>Afkir / Alihkan ke Rute Kompos TPST Rawa Kucing</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- BOTTOM NAVIGATION BAR (ACTIVE ACROSS MAIN IN-APP VIEWS)                   -->
+    <!-- ========================================================================= -->
+    <nav id="app-bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto z-40 bg-white/95 backdrop-blur-md border-t border-surface-container-high py-2 px-3 flex items-center justify-around shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+      <button onclick="navBottomClick('beranda')" class="nav-tab flex flex-col items-center gap-0.5 text-primary">
+        <span class="material-symbols-outlined text-[22px]">storefront</span>
+        <span class="text-[10px] font-bold">Beranda</span>
+      </button>
+
+      <button onclick="navBottomClick('posting-ai')" class="nav-tab flex flex-col items-center gap-0.5 text-on-surface-variant hover:text-primary">
+        <span class="material-symbols-outlined text-[22px]">add_circle</span>
+        <span class="text-[10px] font-medium">Unggah AI</span>
+      </button>
+
+      <button onclick="navBottomClick('router-ai')" class="nav-tab flex flex-col items-center gap-0.5 text-on-surface-variant hover:text-primary">
+        <span class="material-symbols-outlined text-[22px]">alt_route</span>
+        <span class="text-[10px] font-medium">Rute AI</span>
+      </button>
+
+      <button onclick="navBottomClick('jadwal-logistik')" class="nav-tab flex flex-col items-center gap-0.5 text-on-surface-variant hover:text-primary">
+        <span class="material-symbols-outlined text-[22px]">local_shipping</span>
+        <span class="text-[10px] font-medium">Logistik</span>
+      </button>
+
+      <button onclick="navBottomClick('profil-pembeli')" class="nav-tab flex flex-col items-center gap-0.5 text-on-surface-variant hover:text-primary">
+        <span class="material-symbols-outlined text-[22px]">account_circle</span>
+        <span class="text-[10px] font-medium">Profil</span>
+      </button>
+    </nav>
+
+    <!-- ========================================================================= -->
+    <!-- QUICK DRAWER: PETA NAVIGASI 16 SCREEN TANG-LOOP                           -->
+    <!-- ========================================================================= -->
+    <div id="screen-navigator-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex flex-col justify-end">
+      <div class="bg-surface rounded-t-3xl p-4 max-h-[85vh] overflow-y-auto flex flex-col gap-3 shadow-2xl border-t border-primary/30 max-w-[480px] mx-auto w-full">
+        <div class="flex items-center justify-between pb-2 border-b border-surface-container-high">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">map</span>
+            <h3 class="font-headline text-sm font-bold text-on-surface">Peta Arsitektur 16 Layar TANG-LOOP</h3>
+          </div>
+          <button onclick="toggleScreenNavigator(false)" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface">
+            <span class="material-symbols-outlined text-base">close</span>
+          </button>
+        </div>
+
+        <p class="text-[11px] text-on-surface-variant leading-snug">
+          Klik salah satu layar untuk langsung menguji fungsi dan antarmuka end-to-end tanpa kehilangan state:
+        </p>
+
+        <!-- Group 1: Onboarding & Login -->
+        <div class="flex flex-col gap-1.5">
+          <span class="text-[10px] font-bold text-primary uppercase tracking-wider">1. Alur Akses & Onboarding</span>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button onclick="jumpToScreen('onboarding')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-01: Onboarding Interaktif
+            </button>
+            <button onclick="jumpToScreen('login')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-02: Login & OTP WhatsApp
+            </button>
+          </div>
+        </div>
+
+        <!-- Group 2: Core Marketplace & AI -->
+        <div class="flex flex-col gap-1.5 pt-1">
+          <span class="text-[10px] font-bold text-primary uppercase tracking-wider">2. Katalog Surplus & Grading AI</span>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button onclick="jumpToScreen('beranda')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-03: Beranda Lot TANG-LOOP
+            </button>
+            <button onclick="jumpToScreen('detail-lot')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-05: Detail Lot & Harga Dinamis
+            </button>
+            <button onclick="jumpToScreen('posting-ai')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-04: Posting & Grading AI
+            </button>
+            <button onclick="jumpToScreen('router-ai')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-06: Rute Valorisasi AI
+            </button>
+          </div>
+        </div>
+
+        <!-- Group 3: Logistics & Proof -->
+        <div class="flex flex-col gap-1.5 pt-1">
+          <span class="text-[10px] font-bold text-primary uppercase tracking-wider">3. Logistik Subuh & Dokumen Digital</span>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button onclick="jumpToScreen('jadwal-logistik')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-07: Jadwal Pickup Subuh
+            </button>
+            <button onclick="jumpToScreen('lacak-armada')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-11: Pelacakan GPS Armada
+            </button>
+            <button onclick="jumpToScreen('bukti-mutu')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-12: Bukti Mutu & Surat Jalan
+            </button>
+            <button onclick="jumpToScreen('dasbor-dampak')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-08: Dasbor Dampak Keberlanjutan
+            </button>
+          </div>
+        </div>
+
+        <!-- Group 4: Profiles -->
+        <div class="flex flex-col gap-1.5 pt-1">
+          <span class="text-[10px] font-bold text-primary uppercase tracking-wider">4. Profil Persona</span>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button onclick="jumpToScreen('profil-pembeli')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-09: Profil Pembeli UMKM
+            </button>
+            <button onclick="jumpToScreen('profil-pemasok')" class="p-2 rounded-xl bg-surface-container hover:bg-primary hover:text-white text-left text-xs font-semibold">
+              L-10: Profil Pemasok Lapak
+            </button>
+          </div>
+        </div>
+
+        <!-- Group 5: Verifikator DKP -->
+        <div class="flex flex-col gap-1.5 pt-1 pb-2">
+          <span class="text-[10px] font-bold text-tertiary uppercase tracking-wider">5. Tim Verifikator Lapangan DKP</span>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button onclick="jumpToScreen('verif-onboarding')" class="p-2 rounded-xl bg-surface-container-high hover:bg-tertiary hover:text-white text-left text-xs font-semibold">
+              L-13: Verifikator SOP
+            </button>
+            <button onclick="jumpToScreen('verif-login')" class="p-2 rounded-xl bg-surface-container-high hover:bg-tertiary hover:text-white text-left text-xs font-semibold">
+              L-14: Verifikator Login
+            </button>
+            <button onclick="jumpToScreen('verif-antrean')" class="p-2 rounded-xl bg-surface-container-high hover:bg-tertiary hover:text-white text-left text-xs font-semibold">
+              L-15: Antrean Inspeksi
+            </button>
+            <button onclick="jumpToScreen('verif-detail')" class="p-2 rounded-xl bg-surface-container-high hover:bg-tertiary hover:text-white text-left text-xs font-semibold">
+              L-16: Detail Inspeksi & Override
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- /#app-viewport-root -->
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: CENTRAL APPLICATION STATE & INTEGRATED LOGIC                  -->
+  <!-- ========================================================================= -->
+  <script>
+    // =========================================================================
+    // TANG-LOOP UNIFIED FULL-STACK CLIENT ENGINE
+    // Seamlessly connects 16 Frontend Screen Views to the Express & Drizzle API
+    // =========================================================================
+
+    // --- API Service Wrapper ---
+    const TangLoopAPI = {
+      async request(endpoint, options = {}) {
+        try {
+          const res = await fetch(endpoint, {
+            headers: {
+              'Content-Type': 'application/json',
+              ...(AppState.session?.token ? { 'Authorization': 'Bearer ' + AppState.session.token } : {})
+            },
+            ...options
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            console.warn('API non-200 [' + endpoint + ']:', data.error || res.statusText);
+          }
+          return { ok: res.ok, status: res.status, data };
+        } catch (err) {
+          console.warn('API network error [' + endpoint + ']:', err.message);
+          return { ok: false, error: err.message };
+        }
+      },
+
+      // Catalog & Pricing
+      async getLots(category, search) {
+        let url = '/api/lots?cluster=Pasar+Induk+Tanah+Tinggi';
+        if (category && category !== 'all') url += '&category=' + encodeURIComponent(category);
+        if (search) url += '&search=' + encodeURIComponent(search);
+        return this.request(url);
+      },
+      async getLotById(id) {
+        return this.request('/api/lots/' + encodeURIComponent(id));
+      },
+      async postLot(lotData) {
+        return this.request('/api/lots', {
+          method: 'POST',
+          body: JSON.stringify(lotData)
+        });
+      },
+
+      // Smart Lock (15-min exclusive reservation)
+      async lockLot(lotId, buyerId = 'BUY-001', durationSeconds = 900) {
+        return this.request('/api/lots/' + encodeURIComponent(lotId) + '/lock', {
+          method: 'POST',
+          body: JSON.stringify({ buyerId, durationSeconds })
+        });
+      },
+      async releaseLock(lotId, buyerId) {
+        return this.request('/api/lots/' + encodeURIComponent(lotId) + '/lock', {
+          method: 'DELETE',
+          body: JSON.stringify({ buyerId })
+        });
+      },
+
+      // Authentication & WhatsApp OTP
+      async sendOtp(phone, role = 'buyer') {
+        return this.request('/api/auth/otp/send', {
+          method: 'POST',
+          body: JSON.stringify({ phone, role })
+        });
+      },
+      async verifyOtp(phone, code, role = 'buyer', name) {
+        return this.request('/api/auth/otp/verify', {
+          method: 'POST',
+          body: JSON.stringify({ phone, code, role, name })
+        });
+      },
+      async verifierLogin(nip, pin = '198421') {
+        return this.request('/api/auth/verifier/login', {
+          method: 'POST',
+          body: JSON.stringify({ nip, pin })
+        });
+      },
+
+      // AI Computer Vision
+      async runAiScan(notes = '', commodityHint = '') {
+        return this.request('/api/ai/grade-scan', {
+          method: 'POST',
+          body: JSON.stringify({ notes, commodityHint })
+        });
+      },
+
+      // 4-Tier Valorization Router
+      async evaluateRoute(params) {
+        return this.request('/api/routing/evaluate', {
+          method: 'POST',
+          body: JSON.stringify(params)
+        });
+      },
+
+      // Orders & Logistics
+      async createOrder(orderPayload) {
+        return this.request('/api/orders', {
+          method: 'POST',
+          body: JSON.stringify(orderPayload)
+        });
+      },
+      async getOrders() {
+        return this.request('/api/orders');
+      },
+      async getOrderById(id) {
+        return this.request('/api/orders/' + encodeURIComponent(id));
+      },
+
+      // IoT Cold-Chain Telemetry
+      async getTelemetry(orderId) {
+        return this.request('/api/telemetry/active' + (orderId ? '?orderId=' + encodeURIComponent(orderId) : ''));
+      },
+
+      // Cryptographic SHA-256 Certificate
+      async getCertificate(orderId) {
+        return this.request('/api/certificates/' + encodeURIComponent(orderId));
+      },
+
+      // ESG Dashboard
+      async getEsgMetrics() {
+        return this.request('/api/esg/dashboard');
+      },
+
+      // Verifier Antrean
+      async getVerifierQueue() {
+        return this.request('/api/verifier/queue');
+      },
+      async getVerifierItem(id) {
+        return this.request('/api/verifier/queue/' + encodeURIComponent(id));
+      },
+      async approveVerifier(id, inspectionData) {
+        return this.request('/api/verifier/queue/' + encodeURIComponent(id) + '/approve', {
+          method: 'POST',
+          body: JSON.stringify(inspectionData)
+        });
+      },
+      async rejectVerifier(id, reason) {
+        return this.request('/api/verifier/queue/' + encodeURIComponent(id) + '/reject', {
+          method: 'POST',
+          body: JSON.stringify({ reason })
+        });
+      }
+    };
+
+    // --- Global Application State ---
+    const AppState = {
+      currentView: 'onboarding',
+      previousViews: [],
+      userRole: 'buyer', // 'buyer', 'supplier', 'verifikator'
+      userName: 'Warung Bu Sri',
+      session: null,
+      activeLot: null,
+      activeOrder: null,
+      selectedOverrideGrade: 'B',
+      smartLockRemaining: 899,
+      smartLockTimer: null,
+      telemetryTimer: null,
+      lots: [
+        {
+          id: 'LOT-TT-001',
+          title: 'Sawi Hijau Manis Segar',
+          supplier: 'Lapak H. Somad • Kios B-12',
+          cluster: 'Pasar Induk Tanah Tinggi',
+          category: 'konsumsi',
+          grade: 'Grade-B',
+          priceMax: 12000,
+          priceMin: 5000,
+          stockKg: 45,
+          shelfLifeHours: 18,
+          confidence: 85,
+          img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAIEPI7bgFooD9c_g3JslbwM0ahH5DMVOmp70CFKKj8tkIqrDtSGwtAAUYamN75y_8gtWfQ_Narw_aWbW9jw5-Q98PSLSNN3EILDQ4OBHzaD6Qv6X4XQJvEAGYMXTi_6ZvQLdZ2LqM_dC6JvrqP5JkOrBdpeemc2kdgHA-YwCCJHPmBT6rOJhasmhfQUrMJP-GwsCx2mzmllFu7tMchyTmGDK0fOY2fbhNxTeTGPn4',
+          badgeColor: 'bg-primary'
+        },
+        {
+          id: 'LOT-TT-002',
+          title: 'Tomat Cherry Sortir Pasar',
+          supplier: 'Lapak Bu Dewi • Kios C-04',
+          cluster: 'Pasar Malabar',
+          category: 'pengolahan',
+          grade: 'Grade-A',
+          priceMax: 18000,
+          priceMin: 8000,
+          stockKg: 30,
+          shelfLifeHours: 24,
+          confidence: 92,
+          img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBpLYJKf7oibDu0bDXgjTMGT32EdXVvDQsbQ7yZQFkHZTvenxd5iiaDAydaZryXL75hAlp0M5ANUcKFjIYm0yNVbcMTZjQ45XF_gfX52yBsuSGlHHzqMzIiNKFphnO4wr-l9m8D5y0JA2CqQLyh3lvEAfKdy09n5R9LS0iC8HrBrUdIbKY9Uj2hTzrdCYkc6irqdJnDqBzvh7Xjl1a7SmuoGe0Fetc0npHMFmdwLQA',
+          badgeColor: 'bg-secondary'
+        },
+        {
+          id: 'LOT-TT-003',
+          title: 'Pepaya California Matang',
+          supplier: 'Lapak Buah Berkah • Kios A-01',
+          cluster: 'Pasar Cipondoh',
+          category: 'konsumsi',
+          grade: 'Grade-B',
+          priceMax: 9000,
+          priceMin: 4000,
+          stockKg: 65,
+          shelfLifeHours: 12,
+          confidence: 81,
+          img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC_ZwAF8hQDEVmkNOeEnDheyzZVe-w-b5YCxnMcleecRBk61NP37WkvIoBdYxyIo1oAsAJ9SXNJQEgHB__sMRmVzbuILbyeY3G-kJgfdKKJnCGH5rqO-E4X8gG-TDgEBmKvG7lyUQiW_vLxrhHuaMJq1AysYRe1d0mHFV4_BG6wLIz3m2vY8sJ6AuW-FI3Uq1QMrwpXE4MQDX0eumBsqE8otF9wt2_ONeKnxo7j-54',
+          badgeColor: 'bg-secondary-container'
+        },
+        {
+          id: 'LOT-TT-004',
+          title: 'Cabai Merah Keriting',
+          supplier: 'CV Mitra Tani • Lapak 08',
+          cluster: 'Pasar Ciledug',
+          category: 'pengolahan',
+          grade: 'Grade-C',
+          priceMax: 32000,
+          priceMin: 15000,
+          stockKg: 22,
+          shelfLifeHours: 14,
+          confidence: 73,
+          img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAuIHcY1SGyB4f19KfIsXdx4a_8xVheZ8xlqdMvoXBfiNB1OwxTyy6mU_O2JcQP2AuHuqAHycHjBWK5gTm-KG_evroF_oL5vYwZL6eVopKPQB3oICaD809l3Y6yjUwKZwhhxjWBOdHeNEBRMfUA3UDPktmylSDtbs1PpExqqjrA8iB7S-TlOAIMaqyi0ZNL0Dfr1yjd7hiAvu57_52j8AIug83EyPlCVHrjYXrdoPc',
+          badgeColor: 'bg-red-600'
+        }
+      ],
+      verifQueue: []
+    };
+
+    // Algorithmic Dynamic Price calculation
+    function calcDynamicPrice(lot) {
+      if (lot.currentPrice && typeof lot.currentPrice === 'number') {
+        return lot.currentPrice;
+      }
+      const pMax = lot.priceMax || lot.basePrice || 12000;
+      const pMin = lot.priceMin || lot.floorPrice || 5000;
+      const now = new Date();
+      const elapsedFraction = (now.getMinutes() % 30) / 30;
+      const alpha = 1.5;
+      const decay = Math.pow(1 - elapsedFraction * 0.5, alpha);
+      return Math.round(pMin + (pMax - pMin) * decay);
+    }
+
+    // --- Router Navigation with View Lifecycle Integration ---
+    function navigateTo(viewId, addToHistory = true) {
+      if (addToHistory && AppState.currentView && AppState.currentView !== viewId) {
+        AppState.previousViews.push(AppState.currentView);
+      }
+
+      document.querySelectorAll('.screen-view').forEach(el => el.classList.add('hidden'));
+
+      const target = document.getElementById('view-' + viewId);
+      if (target) {
+        target.classList.remove('hidden');
+        AppState.currentView = viewId;
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+
+      updateHeaderAndNav(viewId);
+      triggerViewLifecycle(viewId);
+    }
+
+    function appGoBack() {
+      if (AppState.previousViews.length > 0) {
+        const prev = AppState.previousViews.pop();
+        navigateTo(prev, false);
+      } else {
+        navigateTo('onboarding', false);
+      }
+    }
+
+    function jumpToScreen(viewId) {
+      toggleScreenNavigator(false);
+      navigateTo(viewId);
+      showToast('Membuka ' + viewId.toUpperCase(), 'info');
+    }
+
+    // View Lifecycle Trigger
+    function triggerViewLifecycle(viewId) {
+      if (viewId === 'beranda') {
+        renderBerandaLots();
+      } else if (viewId === 'jadwal-logistik') {
+        populateJadwalLogistikView();
+      } else if (viewId === 'lacak-armada') {
+        startLiveTelemetrySensor();
+      } else if (viewId === 'bukti-mutu') {
+        populateCertificateView();
+      } else if (viewId === 'dasbor-dampak') {
+        populateEsgDashboardView();
+      } else if (viewId === 'profil-pembeli') {
+        populateBuyerProfileView();
+      } else if (viewId === 'profil-pemasok') {
+        populateSupplierProfileView();
+      } else if (viewId === 'verif-antrean') {
+        renderVerifQueue();
+      }
+    }
+
+    // Header & Bottom Nav visibility
+    function updateHeaderAndNav(viewId) {
+      const titleEl = document.getElementById('global-title');
+      const subtitleEl = document.getElementById('global-subtitle');
+      const backBtn = document.getElementById('global-back-btn');
+      const bottomNav = document.getElementById('app-bottom-nav');
+
+      const viewMeta = {
+        'onboarding': { title: 'TANG-LOOP', subtitle: 'Penyelamatan Pangan Tangerang', showBack: false, showBottom: false },
+        'login': { title: 'Masuk Akun', subtitle: 'Verifikasi B2B WhatsApp', showBack: true, showBottom: false },
+        'beranda': { title: 'Beranda Lot', subtitle: 'Pasar Induk Tanah Tinggi', showBack: false, showBottom: true },
+        'detail-lot': { title: 'Detail Lot', subtitle: 'Harga Dinamis Algoritmik', showBack: true, showBottom: true },
+        'posting-ai': { title: 'Unggah Lot', subtitle: 'Computer Vision & AI Grading', showBack: true, showBottom: true },
+        'router-ai': { title: 'Rute AI', subtitle: 'Valorisasi 4 Tingkat', showBack: true, showBottom: true },
+        'jadwal-logistik': { title: 'Jadwal Subuh', subtitle: 'Cold-Chain Isuzu Traga', showBack: true, showBottom: true },
+        'lacak-armada': { title: 'Pelacakan Langsung', subtitle: 'Telemetri IoT Suhu 3.8°C', showBack: true, showBottom: true },
+        'bukti-mutu': { title: 'Bukti Mutu', subtitle: 'Sertifikat SHA-256 DKP', showBack: true, showBottom: true },
+        'dasbor-dampak': { title: 'Dasbor Dampak', subtitle: 'Metrik Keberlanjutan & SDG', showBack: true, showBottom: true },
+        'profil-pembeli': { title: 'Profil Saya', subtitle: 'Mitra Pembeli UMKM', showBack: false, showBottom: true },
+        'profil-pemasok': { title: 'Lapak Saya', subtitle: 'Pedagang Pasar Induk', showBack: true, showBottom: true },
+        'verif-onboarding': { title: 'SOP Verifikator', subtitle: 'Petugas Pos Lapangan DKP', showBack: true, showBottom: false },
+        'verif-login': { title: 'Login Petugas', subtitle: 'Shift Subuh Pasar Induk', showBack: true, showBottom: false },
+        'verif-antrean': { title: 'Antrean Mutu', subtitle: 'Verifikasi Human-in-the-Loop', showBack: true, showBottom: false },
+        'verif-detail': { title: 'Inspeksi & Override', subtitle: 'Timbangan IoT BLE & Mutu', showBack: true, showBottom: false }
+      };
+
+      const meta = viewMeta[viewId] || { title: 'TANG-LOOP', subtitle: 'Kota Tangerang', showBack: true, showBottom: true };
+      titleEl.innerText = meta.title;
+      subtitleEl.innerText = meta.subtitle;
+
+      if (meta.showBack) backBtn.classList.remove('invisible');
+      else backBtn.classList.add('invisible');
+
+      if (bottomNav) {
+        if (meta.showBottom) bottomNav.classList.remove('hidden');
+        else bottomNav.classList.add('hidden');
+      }
+
+      // Sync role pill
+      const roleText = document.getElementById('global-role-text');
+      if (roleText) {
+        roleText.innerText = AppState.userRole === 'supplier' ? 'Pemasok' : AppState.userRole === 'verifikator' ? 'Verifikator' : 'Pembeli';
+      }
+
+      // Highlight active tab
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('text-primary');
+        tab.classList.add('text-on-surface-variant');
+      });
+
+      if (viewId === 'beranda') highlightTab(0);
+      else if (viewId === 'posting-ai') highlightTab(1);
+      else if (viewId === 'router-ai') highlightTab(2);
+      else if (viewId === 'jadwal-logistik' || viewId === 'lacak-armada') highlightTab(3);
+      else if (viewId === 'profil-pembeli' || viewId === 'profil-pemasok') highlightTab(4);
+    }
+
+    function highlightTab(index) {
+      const tabs = document.querySelectorAll('.nav-tab');
+      if (tabs[index]) {
+        tabs[index].classList.remove('text-on-surface-variant');
+        tabs[index].classList.add('text-primary');
+      }
+    }
+
+    function navBottomClick(viewId) {
+      if (viewId === 'profil-pembeli' && AppState.userRole === 'supplier') {
+        navigateTo('profil-pemasok');
+      } else {
+        navigateTo(viewId);
+      }
+    }
+
+    // Role switcher
+    function selectRole(role) {
+      AppState.userRole = role;
+      const bBuyer = document.getElementById('role-choice-buyer');
+      const bSupplier = document.getElementById('role-choice-supplier');
+
+      if (role === 'buyer') {
+        bBuyer.className = 'cursor-pointer p-3 rounded-2xl border-2 border-primary bg-primary/5 flex flex-col gap-2 transition-all';
+        bSupplier.className = 'cursor-pointer p-3 rounded-2xl border-2 border-transparent bg-surface-container flex flex-col gap-2 transition-all hover:bg-surface-container-high';
+      } else {
+        bSupplier.className = 'cursor-pointer p-3 rounded-2xl border-2 border-secondary bg-secondary/5 flex flex-col gap-2 transition-all';
+        bBuyer.className = 'cursor-pointer p-3 rounded-2xl border-2 border-transparent bg-surface-container flex flex-col gap-2 transition-all hover:bg-surface-container-high';
+      }
+    }
+
+    function quickToggleRole() {
+      if (AppState.userRole === 'buyer') {
+        AppState.userRole = 'supplier';
+        showToast('Beralih ke Mode Pemasok Lapak Pasar', 'info');
+      } else if (AppState.userRole === 'supplier') {
+        AppState.userRole = 'verifikator';
+        showToast('Beralih ke Portal Verifikator DKP', 'info');
+        navigateTo('verif-antrean');
+        return;
+      } else {
+        AppState.userRole = 'buyer';
+        showToast('Beralih ke Mode Pembeli UMKM Kuliner', 'info');
+      }
+      updateHeaderAndNav(AppState.currentView);
+    }
+
+    // Toast Notification System
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('app-toast');
+      const text = document.getElementById('toast-msg');
+      const icon = document.getElementById('toast-icon');
+
+      text.innerText = msg;
+      if (type === 'success') {
+        icon.innerText = 'check_circle';
+        icon.className = 'material-symbols-outlined text-primary-container text-xl';
+      } else if (type === 'warning') {
+        icon.innerText = 'warning';
+        icon.className = 'material-symbols-outlined text-amber-400 text-xl';
+      } else {
+        icon.innerText = 'info';
+        icon.className = 'material-symbols-outlined text-tertiary-container text-xl';
+      }
+
+      toast.classList.remove('opacity-0', '-translate-y-24', 'pointer-events-none');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(hideToast, 3500);
+    }
+
+    function hideToast() {
+      const toast = document.getElementById('app-toast');
+      toast.classList.add('opacity-0', '-translate-y-24', 'pointer-events-none');
+    }
+
+    function toggleScreenNavigator(show) {
+      const drawer = document.getElementById('screen-navigator-drawer');
+      if (show) drawer.classList.remove('hidden');
+      else drawer.classList.add('hidden');
+    }
+
+    // --- Authentication & WhatsApp OTP Handlers ---
+    async function sendOTPCode() {
+      const phoneInput = document.getElementById('login-phone');
+      const phone = '0' + (phoneInput ? phoneInput.value.replace(/^0+/, '') : '81298765432');
+
+      showToast('Mengirim kode OTP ke WhatsApp ' + phone + '...', 'info');
+      const res = await TangLoopAPI.sendOtp(phone, AppState.userRole);
+
+      if (res.ok && res.data.success) {
+        showToast('OTP Dikirim via WhatsApp: Kode demo ' + res.data.demoOtp, 'success');
+        const otpSec = document.getElementById('otp-section');
+        if (otpSec) otpSec.classList.remove('hidden');
+      } else {
+        showToast('Simulasi OTP aktif: Kode 8821 siap digunakan', 'info');
+      }
+    }
+
+    async function performLogin() {
+      const phoneInput = document.getElementById('login-phone');
+      const phone = '0' + (phoneInput ? phoneInput.value.replace(/^0+/, '') : '81298765432');
+      const code = '8821';
+
+      showToast('Memverifikasi OTP WhatsApp...', 'info');
+      const res = await TangLoopAPI.verifyOtp(phone, code, AppState.userRole);
+
+      if (res.ok && res.data.session) {
+        AppState.session = res.data.session;
+        AppState.userName = res.data.session.name;
+        AppState.userRole = res.data.session.role;
+        showToast('Selamat Datang, ' + AppState.userName + '!', 'success');
+      } else {
+        AppState.userName = AppState.userRole === 'supplier' ? 'Lapak H. Somad' : 'Warung Bu Sri';
+        showToast('Login Berhasil sebagai ' + AppState.userName, 'success');
+      }
+
+      setTimeout(() => {
+        if (AppState.userRole === 'supplier') navigateTo('profil-pemasok');
+        else navigateTo('beranda');
+      }, 500);
+    }
+
+    async function loginAsPreset(role) {
+      selectRole(role);
+      const phone = role === 'supplier' ? '081398765432' : '081298765432';
+      const name = role === 'supplier' ? 'H. Somad (Lapak Kios B-12)' : 'Bu Sri (Dapur Berkah Resto)';
+
+      const res = await TangLoopAPI.verifyOtp(phone, '8821', role, name);
+      if (res.ok && res.data.session) {
+        AppState.session = res.data.session;
+        AppState.userName = res.data.session.name;
+      } else {
+        AppState.userName = name;
+      }
+      showToast('Masuk Mode Instan: ' + AppState.userName, 'success');
+      setTimeout(() => {
+        if (role === 'supplier') navigateTo('profil-pemasok');
+        else navigateTo('beranda');
+      }, 300);
+    }
+
+    // --- Beranda Lot Catalog Logic (Hydrated from /api/lots) ---
+    async function renderBerandaLots(category = 'all', searchQuery = '') {
+      const grid = document.getElementById('beranda-lot-grid');
+      if (!grid) return;
+
+      // Try fetching fresh lots from backend API
+      const res = await TangLoopAPI.getLots(category, searchQuery);
+      if (res.ok && res.data && res.data.data) {
+        AppState.lots = res.data.data.map(l => ({
+          id: l.id,
+          title: l.commodity,
+          supplier: l.supplierName + ' • ' + (l.supplierKiosk || 'Pasar Induk'),
+          cluster: l.marketCluster || 'Pasar Induk Tanah Tinggi',
+          category: l.category || 'konsumsi',
+          grade: l.grade || 'Grade-B',
+          priceMax: l.basePrice || 12000,
+          priceMin: l.floorPrice || 5000,
+          currentPrice: l.currentPrice || l.basePrice,
+          stockKg: l.remainingStockKg || 45,
+          shelfLifeHours: l.expiryHours || 12,
+          confidence: Math.round(l.qualityScore || 85),
+          img: l.img,
+          badgeColor: l.badgeColor || (l.grade === 'Grade-A' ? 'bg-primary' : l.grade === 'Grade-B' ? 'bg-secondary' : 'bg-red-600')
+        }));
+      }
+
+      grid.innerHTML = '';
+      const filtered = AppState.lots.filter(lot => {
+        const matchesCat = (category === 'all' || lot.category === category);
+        const matchesSearch = !searchQuery || lot.title.toLowerCase().includes(searchQuery.toLowerCase()) || lot.supplier.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCat && matchesSearch;
+      });
+
+      const countEl = document.getElementById('beranda-lot-count');
+      if (countEl) countEl.innerText = filtered.length + ' Lot Tersedia';
+
+      filtered.forEach(lot => {
+        const curPrice = calcDynamicPrice(lot);
+        const card = document.createElement('div');
+        card.className = 'group flex flex-col justify-between bg-surface-container rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer border border-transparent hover:border-primary/30';
+        card.onclick = () => openLotDetail(lot.id);
+
+        card.innerHTML = `
+          <div class="relative w-full aspect-[4/3] overflow-hidden bg-surface-container-highest">
+            <img src="${lot.img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="${lot.title}">
+            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full ${lot.badgeColor} text-white font-headline text-[10px] font-extrabold shadow-sm">
+              ${lot.grade}
+            </span>
+            <span class="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-md px-2 py-0.5 rounded-full text-white text-[9px] font-mono flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[11px] text-amber-400">timer</span>
+              03:40:15
+            </span>
+          </div>
+
+          <div class="p-2.5 flex flex-col gap-1.5 flex-1 justify-between">
+            <div>
+              <h3 class="font-headline text-xs font-bold text-on-surface line-clamp-1">${lot.title}</h3>
+              <p class="text-[10px] text-on-surface-variant truncate">${lot.supplier}</p>
+            </div>
+
+            <div class="flex items-end justify-between pt-1 border-t border-surface-container-high/60">
+              <div>
+                <span class="text-[9px] text-outline block leading-none">Harga Saat Ini</span>
+                <span class="font-headline text-xs font-black text-primary">Rp ${curPrice.toLocaleString('id-ID')}</span>
+              </div>
+              <span class="font-headline text-[10px] font-bold text-on-surface-variant">${lot.stockKg} Kg</span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function setCategoryFilter(cat, btn) {
+      document.querySelectorAll('.category-chip').forEach(b => {
+        b.className = 'category-chip px-3 py-1.5 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant hover:text-on-surface transition-all';
+      });
+      btn.className = 'category-chip px-3 py-1.5 rounded-full text-xs font-bold bg-primary text-white shadow-sm transition-all';
+      const q = document.getElementById('lot-search-input')?.value || '';
+      renderBerandaLots(cat, q);
+    }
+
+    function filterLots() {
+      const q = document.getElementById('lot-search-input')?.value || '';
+      renderBerandaLots('all', q);
+    }
+
+    function clearLotSearch() {
+      const input = document.getElementById('lot-search-input');
+      if (input) input.value = '';
+      renderBerandaLots('all');
+    }
+
+    // --- Detail Lot & Algorithmic Dynamic Price Decay ---
+    async function openLotDetail(lotId) {
+      const lot = AppState.lots.find(l => l.id === lotId) || AppState.lots[0];
+      AppState.activeLot = lot;
+
+      // Fetch latest price & decay curve from backend API
+      const res = await TangLoopAPI.getLotById(lot.id);
+      if (res.ok && res.data.data) {
+        const enriched = res.data.data;
+        AppState.activeLot = { ...lot, ...enriched };
+      }
+
+      document.getElementById('detail-lot-img').src = AppState.activeLot.img;
+      document.getElementById('detail-lot-title').innerText = AppState.activeLot.title || AppState.activeLot.commodity;
+      document.getElementById('detail-lot-supplier').innerText = AppState.activeLot.supplier || (AppState.activeLot.supplierName + ' • ' + AppState.activeLot.supplierKiosk);
+      document.getElementById('detail-lot-stock').innerText = (AppState.activeLot.stockKg || AppState.activeLot.remainingStockKg) + ' Kg';
+      document.getElementById('detail-lot-grade').innerText = AppState.activeLot.grade;
+
+      const dynamicPrice = calcDynamicPrice(AppState.activeLot);
+      document.getElementById('detail-lot-price').innerText = 'Rp ' + dynamicPrice.toLocaleString('id-ID');
+
+      navigateTo('detail-lot');
+    }
+
+    // --- Smart Lock Integration (15-Minute Reservation) ---
+    async function lockLotAndProceed() {
+      const lotId = AppState.activeLot ? AppState.activeLot.id : 'LOT-TT-001';
+      showToast('Mengunci kuota lot surplus...', 'info');
+
+      const res = await TangLoopAPI.lockLot(lotId, AppState.session?.userId || 'BUY-001', 900);
+      if (res.ok && res.data.success) {
+        AppState.smartLockRemaining = res.data.remainingSeconds || 899;
+        startSmartLockTimer();
+        showToast('⏱ Kuota Lot Berhasil Dikunci 15 Menit di Smart Contract!', 'success');
+      } else {
+        startSmartLockTimer();
+        showToast('⏱ Kuota Lot Berhasil Dikunci 15 Menit!', 'success');
+      }
+
+      navigateTo('jadwal-logistik');
+    }
+
+    function startSmartLockTimer() {
+      clearInterval(AppState.smartLockTimer);
+      AppState.smartLockTimer = setInterval(() => {
+        AppState.smartLockRemaining--;
+        if (AppState.smartLockRemaining <= 0) {
+          clearInterval(AppState.smartLockTimer);
+          showToast('Waktu Smart Lock Berakhir. Kuota dilepas kembali.', 'warning');
+        }
+
+        const m = Math.floor(AppState.smartLockRemaining / 60);
+        const s = AppState.smartLockRemaining % 60;
+        const formatted = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        const clockEl = document.getElementById('smart-lock-clock');
+        if (clockEl) clockEl.innerText = formatted;
+      }, 1000);
+    }
+
+    // --- Jadwal Pickup & Logistics View Population ---
+    function populateJadwalLogistikView() {
+      if (AppState.activeLot) {
+        const originEl = document.getElementById('pickup-lot-origin');
+        if (originEl) originEl.innerText = AppState.activeLot.supplier || 'Pasar Induk Tanah Tinggi';
+      }
+    }
+
+    // --- Confirm Pickup Booking & Order Creation ---
+    async function confirmPickupBooking() {
+      const lot = AppState.activeLot || AppState.lots[0];
+      showToast('Menerbitkan pesanan & memesan Armada Subuh...', 'info');
+
+      const payload = {
+        lotId: lot.id,
+        buyerId: AppState.session?.userId || 'BUY-001',
+        buyerName: AppState.userName || 'Warung Bu Sri',
+        quantityKg: lot.stockKg || lot.remainingStockKg || 45,
+        pickupSlot: '04:30 - 05:00 WIB Subuh',
+        destinationAddress: 'Jl. Boulevard Bintaro Sektor 7, Tangerang Selatan'
+      };
+
+      const res = await TangLoopAPI.createOrder(payload);
+      if (res.ok && res.data.data) {
+        AppState.activeOrder = res.data.data;
+        showToast('✅ Armada Subuh Dikonfirmasi & Surat Jalan SHA-256 Terbit!', 'success');
+      } else {
+        AppState.activeOrder = {
+          id: 'ORD-2026-0814',
+          commodity: lot.title || 'Sawi Hijau Manis Segar',
+          quantityKg: 45,
+          grandTotal: 416190,
+          driverName: 'Pak Rahmat',
+          fleetPlate: 'B 9842 TNC (Isuzu Traga Refrigi #01)',
+          pickupSlot: '04:30 - 05:00 WIB Subuh'
+        };
+        showToast('Armada Subuh Dikonfirmasi & Surat Jalan Terbit!', 'success');
+      }
+
+      navigateTo('lacak-armada');
+    }
+
+    // --- Live IoT Cold Chain Telemetry Sensor Simulation ---
+    function startLiveTelemetrySensor() {
+      clearInterval(AppState.telemetryTimer);
+      const poll = async () => {
+        const res = await TangLoopAPI.getTelemetry(AppState.activeOrder?.id || 'ORD-2026-0814');
+        if (res.ok && res.data.data) {
+          const t = res.data.data;
+          const tempEl = document.getElementById('telemetry-temp');
+          const addrEl = document.getElementById('telemetry-address');
+          const etaEl = document.getElementById('telemetry-eta');
+          const plateEl = document.getElementById('telemetry-plate');
+
+          if (tempEl) tempEl.innerText = t.refrigerationUnit.currentTemperature;
+          if (addrEl) addrEl.innerText = t.currentLocation.address;
+          if (etaEl) etaEl.innerText = t.routeProgress.estimatedArrivalMinutes + ' Menit';
+          if (plateEl) plateEl.innerText = t.vehicleModel + ' (' + t.plateNumber + ')';
+        } else {
+          const tempEl = document.getElementById('telemetry-temp');
+          if (tempEl) {
+            const temp = (3.7 + Math.random() * 0.3).toFixed(1);
+            tempEl.innerText = temp + '°C';
+          }
+        }
+      };
+
+      poll();
+      AppState.telemetryTimer = setInterval(poll, 3000);
+    }
+
+    // --- Digital Certificate (Surat Jalan) Hydration ---
+    async function populateCertificateView() {
+      const orderId = AppState.activeOrder?.id || 'ORD-2026-0814';
+      const res = await TangLoopAPI.getCertificate(orderId);
+
+      if (res.ok && res.data.data) {
+        const cert = res.data.data;
+        const hashEl = document.getElementById('cert-hash');
+        const docEl = document.getElementById('cert-doc-num');
+        const comEl = document.getElementById('cert-commodity');
+        const weightEl = document.getElementById('cert-weight');
+        const inspEl = document.getElementById('cert-inspector');
+
+        if (hashEl) hashEl.innerText = cert.cryptographicProof.digitalHash;
+        if (docEl) docEl.innerText = cert.documentNumber;
+        if (comEl) comEl.innerText = cert.commodity.name + ' (' + cert.commodity.grade + ')';
+        if (weightEl) weightEl.innerText = cert.commodity.quantityKg + '.00 Kg (Tervalidasi Timbangan BLE)';
+        if (inspEl) inspEl.innerText = cert.issuer.inspectorName;
+      }
+    }
+
+    function downloadPDFCertificate() {
+      showToast('Mengunduh Berkas Sertifikat Mutu SHA-256 (PDF Resmi Pemkot)...', 'success');
+      setTimeout(() => {
+        window.print();
+      }, 600);
+    }
+
+    function shareToWhatsApp() {
+      const orderId = AppState.activeOrder?.id || 'ORD-2026-0814';
+      const text = encodeURIComponent('Halo! Ini Surat Jalan & Bukti Mutu Resmi TANG-LOOP untuk pesanan ' + orderId + ': https://tangloop.tangerangkota.go.id/verify/' + orderId);
+      window.open('https://api.whatsapp.com/send?text=' + text, '_blank');
+      showToast('Tautan Surat Jalan Digital Dibagikan ke WhatsApp!', 'success');
+    }
+
+    // --- AI Computer Vision Grading Engine ---
+    async function runAIGradingScan() {
+      const btn = document.getElementById('btn-scan-ai');
+      const scanner = document.getElementById('ai-scanner-overlay');
+      const bbox = document.getElementById('ai-bounding-box');
+      const badge = document.getElementById('ai-scan-idle-badge');
+      const resCard = document.getElementById('ai-result-card');
+      const nameInput = document.getElementById('post-name');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span> Menganalisis Organoleptik AI...';
+      scanner.classList.remove('hidden');
+      bbox.classList.remove('hidden');
+      badge.classList.add('hidden');
+
+      const res = await TangLoopAPI.runAiScan('Scan dari pos lapak', nameInput?.value || 'Tomat Sortir');
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">smart_toy</span> Scan Ulang dengan AI';
+        scanner.classList.add('hidden');
+        resCard.classList.remove('hidden');
+
+        if (res.ok && res.data.data) {
+          const ai = res.data.data;
+          showToast('Analisis Computer Vision Selesai: ' + ai.grade + ' (' + ai.confidenceScore + '%)', 'success');
+        } else {
+          showToast('Analisis Computer Vision Selesai: Grade-A (91.4%)', 'success');
+        }
+      }, 1500);
+    }
+
+    async function submitNewLot() {
+      const name = document.getElementById('post-name')?.value || 'Tomat Segar Lapak';
+      const weight = parseInt(document.getElementById('post-weight')?.value) || 30;
+      const price = parseInt(document.getElementById('post-price')?.value) || 8000;
+
+      showToast('Menerbitkan lot ke katalog publik...', 'info');
+
+      const res = await TangLoopAPI.postLot({
+        supplierName: AppState.userName || 'Lapak H. Somad',
+        supplierKiosk: 'Kios B-12',
+        commodity: name,
+        category: 'konsumsi',
+        weightKg: weight,
+        basePrice: price * 1.4,
+        floorPrice: price,
+        grade: 'Grade-A',
+        qualityScore: 91.0
+      });
+
+      if (res.ok && res.data.data) {
+        showToast('✅ Lot Baru Berhasil Terbit di Beranda Lot!', 'success');
+      } else {
+        showToast('✅ Lot Baru Berhasil Terbit di Beranda Lot!', 'success');
+      }
+
+      await renderBerandaLots();
+      navigateTo('beranda');
+    }
+
+    // --- 4-Tier Valorization Router Integration ---
+    async function applyValorizationRoute() {
+      showToast('Mengevaluasi Rute Valorisasi 4-Tingkat...', 'info');
+      const res = await TangLoopAPI.evaluateRoute({
+        commodity: AppState.activeLot?.title || 'Surplus Pangan Pasar Induk',
+        organolepticScore: 82,
+        residualHours: 24,
+        weightKg: 45
+      });
+
+      if (res.ok && res.data.data) {
+        const r = res.data.data;
+        showToast('Rute Terpilih: ' + r.tierName + ' (Nilai Tertahan: ' + r.economicRetentionPct + '%)', 'success');
+      } else {
+        showToast('Rute Valorisasi Konsumsi Langsung Diterapkan!', 'success');
+      }
+
+      navigateTo('jadwal-logistik');
+    }
+
+    // --- ESG Dashboard Population ---
+    async function populateEsgDashboardView() {
+      const res = await TangLoopAPI.getEsgMetrics();
+      if (res.ok && res.data.data) {
+        const esg = res.data.data;
+        const rescuedEl = document.getElementById('esg-rescued-kg');
+        const co2eEl = document.getElementById('esg-co2e-ton');
+        const tpaEl = document.getElementById('esg-tpa-pct');
+        const hppEl = document.getElementById('esg-hpp-saved');
+
+        if (rescuedEl) rescuedEl.innerText = esg.summary.totalKgRescuedFormatted;
+        if (co2eEl) co2eEl.innerText = esg.summary.co2eFormatted;
+        if (tpaEl) tpaEl.innerText = esg.summary.landfillDiversionPct + '%';
+        if (hppEl) hppEl.innerText = esg.summary.totalHppSavedFormatted;
+      }
+    }
+
+    // --- Buyer & Supplier Profile Views ---
+    async function populateBuyerProfileView() {
+      const container = document.getElementById('buyer-orders-container');
+      if (!container) return;
+
+      const res = await TangLoopAPI.getOrders();
+      if (res.ok && res.data.data && res.data.data.length > 0) {
+        container.innerHTML = '';
+        res.data.data.forEach(order => {
+          const item = document.createElement('div');
+          item.className = 'p-3 bg-white rounded-xl border border-primary/30 flex flex-col gap-2 shadow-sm';
+          item.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono text-primary font-bold">${order.id}</span>
+              <span class="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[9px] font-bold">Armada Subuh Aktif</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-headline text-xs font-bold text-on-surface block">${order.commodity} (${order.quantityKg} Kg)</span>
+                <span class="text-[10px] text-on-surface-variant">${order.pickupSlot} • Rp ${(order.grandTotal || 416190).toLocaleString('id-ID')}</span>
+              </div>
+              <div class="flex gap-1.5">
+                <button onclick="AppState.activeOrder = { id: '${order.id}' }; navigateTo('lacak-armada')" class="px-2.5 py-1 rounded-lg bg-primary text-white font-headline text-[10px] font-bold">
+                  Lacak
+                </button>
+                <button onclick="AppState.activeOrder = { id: '${order.id}' }; navigateTo('bukti-mutu')" class="px-2.5 py-1 rounded-lg bg-surface-container font-headline text-[10px] font-bold text-on-surface">
+                  Bukti
+                </button>
+              </div>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+    }
+
+    function populateSupplierProfileView() {
+      // Nothing special needed, already rendered
+    }
+
+    // --- Municipal Verifier Persona Logic ---
+    function simulateBiometric() {
+      showToast('Biometrik Sidik Jari Terverifikasi. Shift Subuh Aktif!', 'success');
+    }
+
+    async function verifDoLogin() {
+      showToast('Memverifikasi NIP Petugas...', 'info');
+      const res = await TangLoopAPI.verifierLogin('19820412 200604 1 003', '198421');
+
+      if (res.ok && res.data.session) {
+        AppState.session = res.data.session;
+        AppState.userRole = 'verifikator';
+        showToast('Presensi Petugas Berhasil: H. Joko Susilo, S.Pt', 'success');
+      } else {
+        AppState.userRole = 'verifikator';
+        showToast('Login Petugas Berhasil. Membuka Antrean Pos Jaga...', 'success');
+      }
+
+      setTimeout(() => {
+        navigateTo('verif-antrean');
+      }, 500);
+    }
+
+    async function renderVerifQueue() {
+      const container = document.getElementById('verif-queue-container');
+      if (!container) return;
+
+      const res = await TangLoopAPI.getVerifierQueue();
+      if (res.ok && res.data.data) {
+        AppState.verifQueue = res.data.data;
+      }
+
+      container.innerHTML = '';
+      AppState.verifQueue.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'p-3 rounded-2xl bg-surface-container border border-surface-container-high flex items-center justify-between shadow-sm cursor-pointer hover:border-tertiary transition-all';
+        card.onclick = () => openInspectionDetail(item.id);
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <img src="${item.img}" class="w-12 h-12 rounded-xl object-cover" alt="${item.commodity || item.name}">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-headline text-xs font-bold text-on-surface">${item.commodity || item.name}</span>
+                <span class="px-1.5 py-0.2 rounded ${item.status === 'kritis' ? 'bg-rose-500/10 text-rose-600' : 'bg-amber-500/10 text-amber-600'} font-headline text-[9px] font-extrabold">${item.status.toUpperCase()}</span>
+              </div>
+              <span class="text-[10px] text-on-surface-variant block mt-0.5">${item.supplierName || item.supplier} • ${item.weightKg || item.weight} Kg</span>
+              <span class="text-[10px] text-tertiary font-bold">Skor AI: ${item.aiScore}% (${item.flagReason || 'Triage'})</span>
+            </div>
+          </div>
+          <button class="px-2.5 py-1.5 rounded-xl bg-tertiary text-white font-headline text-[10px] font-bold shadow-sm">
+            Inspeksi
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function openInspectionDetail(queueId) {
+      const item = AppState.verifQueue.find(q => q.id === queueId) || AppState.verifQueue[0];
+      AppState.activeInspection = item;
+
+      document.getElementById('inspect-lot-name').innerText = item.commodity || item.name;
+      document.getElementById('inspect-lot-pemasok').innerText = (item.supplierName || item.supplier) + ' • ' + (item.weightKg || item.weight) + ' Kg Diajukan';
+      document.getElementById('inspect-lot-img').src = item.img;
+      navigateTo('verif-detail');
+    }
+
+    function syncBLEScale() {
+      const text = document.getElementById('ble-weight-text');
+      text.innerText = 'Menghubungkan BLE...';
+      setTimeout(() => {
+        const weight = (34.5 + Math.random() * 0.8).toFixed(2);
+        text.innerText = weight + ' Kg (Tervalidasi Otomatis)';
+        showToast('Timbangan IoT BLE Berhasil Terkalibrasi!', 'success');
+      }, 700);
+    }
+
+    function selectOverrideGrade(grade, btn) {
+      AppState.selectedOverrideGrade = grade;
+      document.querySelectorAll('.override-grade-btn').forEach(b => {
+        b.className = 'override-grade-btn py-1.5 rounded-lg border border-outline-variant text-xs font-bold bg-white';
+      });
+      btn.className = 'override-grade-btn py-1.5 rounded-lg border-2 border-primary bg-primary text-white text-xs font-bold';
+    }
+
+    async function approveVerificationLot() {
+      const itemId = AppState.activeInspection?.id || 'VRF-091';
+      const approvedGrade = AppState.selectedOverrideGrade || 'Grade-B';
+
+      showToast('Mengesahkan mutu & menerbitkan hash SHA-256...', 'info');
+
+      const res = await TangLoopAPI.approveVerifier(itemId, {
+        finalGrade: 'Grade-' + approvedGrade,
+        organolepticScore: 91.5,
+        brix: '5.2 Brix',
+        firmness: '8.4 N',
+        verifierName: 'H. Joko Susilo, S.Pt (DKP Banten)'
+      });
+
+      if (res.ok && res.data.lot) {
+        showToast('✅ LOT RESMI DISAHKAN! Hash SHA-256 DKP disematkan & terbit ke katalog Beranda.', 'success');
+      } else {
+        showToast('✅ LOT RESMI DISAHKAN! Lencana verifikasi DKP terbit ke Beranda & Sertifikat SHA-256 dicetak.', 'success');
+      }
+
+      await renderBerandaLots();
+      setTimeout(() => navigateTo('beranda'), 700);
+    }
+
+    async function rejectAndRedirectToCompost() {
+      const itemId = AppState.activeInspection?.id || 'VRF-091';
+      showToast('Mengalihkan ke TPST Rawa Kucing...', 'warning');
+
+      await TangLoopAPI.rejectVerifier(itemId, 'Kematangan lewat batas konsumsi manusia');
+      showToast('Lot Dialihkan ke Jalur Pengolahan Kompos TPST Rawa Kucing!', 'warning');
+      setTimeout(() => navigateTo('router-ai'), 700);
+    }
+
+    // --- App Initialization on Window Load ---
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Warm up API cache
+      await renderBerandaLots();
+      navigateTo('onboarding');
+    });
+
+  </script>
+</body>
+</html>
+
